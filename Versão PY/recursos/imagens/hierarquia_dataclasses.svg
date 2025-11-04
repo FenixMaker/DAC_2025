@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1000" height="800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .dataclass-box { fill: #e8f5e8; stroke: #2e7d32; stroke-width: 2; }
+      .abstract-box { fill: #fff3e0; stroke: #ef6c00; stroke-width: 2; }
+      .concrete-box { fill: #e3f2fd; stroke: #1565c0; stroke-width: 2; }
+      .aggregator-box { fill: #fce4ec; stroke: #c2185b; stroke-width: 2; }
+      .class-title { font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; }
+      .class-attribute { font-family: Arial, sans-serif; font-size: 11px; fill: #555; }
+      .class-method { font-family: Arial, sans-serif; font-size: 11px; fill: #0066cc; }
+      .inheritance-line { stroke: #333; stroke-width: 2; fill: none; }
+      .composition-line { stroke: #666; stroke-width: 2; fill: none; }
+      .decorator-text { font-family: Arial, sans-serif; font-size: 10px; fill: #666; font-style: italic; }
+    </style>
+  </defs>
+  
+  <!-- Título -->
+  <text x="500" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#333">
+    Hierarquia de Dataclasses - Sistema DAC
+  </text>
+  
+  <!-- Classe Base: DadoEstatistico -->
+  <rect x="400" y="60" width="200" height="120" class="abstract-box"/>
+  <text x="500" y="80" text-anchor="middle" class="class-title" fill="#ef6c00">@dataclass</text>
+  <text x="500" y="100" text-anchor="middle" class="class-title" fill="#ef6c00">DadoEstatistico</text>
+  <line x1="400" y1="105" x2="600" y2="105" stroke="#ef6c00" stroke-width="1"/>
+  <text x="410" y="120" class="class-attribute">+ valor: str</text>
+  <text x="410" y="135" class="class-attribute">+ unidade: str = "%"</text>
+  <line x1="400" y1="140" x2="600" y2="140" stroke="#ef6c00" stroke-width="1"/>
+  <text x="410" y="155" class="class-method">+ processar_valor() -> float</text>
+  <text x="410" y="170" class="class-method">+ __post_init__()</text>
+  
+  <!-- AcessoInternetDomicilios -->
+  <rect x="50" y="250" width="220" height="140" class="concrete-box"/>
+  <text x="160" y="270" text-anchor="middle" class="class-title" fill="#1565c0">@dataclass</text>
+  <text x="160" y="290" text-anchor="middle" class="class-title" fill="#1565c0">AcessoInternetDomicilios</text>
+  <line x1="50" y1="295" x2="270" y2="295" stroke="#1565c0" stroke-width="1"/>
+  <text x="60" y="310" class="class-attribute">+ percentual_acesso: str</text>
+  <text x="60" y="325" class="class-attribute">+ total_domicilios: str</text>
+  <text x="60" y="340" class="class-attribute">+ ano_referencia: int</text>
+  <line x1="50" y1="345" x2="270" y2="345" stroke="#1565c0" stroke-width="1"/>
+  <text x="60" y="360" class="class-method">+ calcular_evolucao()</text>
+  <text x="60" y="375" class="class-method">+ calcular_crescimento()</text>
+  
+  <!-- PerfilUsuarios -->
+  <rect x="300" y="250" width="180" height="120" class="concrete-box"/>
+  <text x="390" y="270" text-anchor="middle" class="class-title" fill="#1565c0">@dataclass</text>
+  <text x="390" y="290" text-anchor="middle" class="class-title" fill="#1565c0">PerfilUsuarios</text>
+  <line x1="300" y1="295" x2="480" y2="295" stroke="#1565c0" stroke-width="1"/>
+  <text x="310" y="310" class="class-attribute">+ faixa_etaria: str</text>
+  <text x="310" y="325" class="class-attribute">+ percentual_uso: str</text>
+  <text x="310" y="340" class="class-attribute">+ atividades_principais: str</text>
+  <line x1="300" y1="345" x2="480" y2="345" stroke="#1565c0" stroke-width="1"/>
+  <text x="310" y="360" class="class-method">+ get_atividades_lista()</text>
+  
+  <!-- PerfilNaoUsuarios -->
+  <rect x="510" y="250" width="180" height="120" class="concrete-box"/>
+  <text x="600" y="270" text-anchor="middle" class="class-title" fill="#1565c0">@dataclass</text>
+  <text x="600" y="290" text-anchor="middle" class="class-title" fill="#1565c0">PerfilNaoUsuarios</text>
+  <line x1="510" y1="295" x2="690" y2="295" stroke="#1565c0" stroke-width="1"/>
+  <text x="520" y="310" class="class-attribute">+ motivos_nao_uso: str</text>
+  <text x="520" y="325" class="class-attribute">+ percentual_grupo: str</text>
+  <text x="520" y="340" class="class-attribute">+ caracteristicas: str</text>
+  <line x1="510" y1="345" x2="690" y2="345" stroke="#1565c0" stroke-width="1"/>
+  <text x="520" y="360" class="class-method">+ get_motivos_lista()</text>
+  
+  <!-- AcessoExclusivoCelular -->
+  <rect x="720" y="250" width="200" height="120" class="concrete-box"/>
+  <text x="820" y="270" text-anchor="middle" class="class-title" fill="#1565c0">@dataclass</text>
+  <text x="820" y="290" text-anchor="middle" class="class-title" fill="#1565c0">AcessoExclusivoCelular</text>
+  <line x1="720" y1="295" x2="920" y2="295" stroke="#1565c0" stroke-width="1"/>
+  <text x="730" y="310" class="class-attribute">+ percentual_exclusivo: str</text>
+  <text x="730" y="325" class="class-attribute">+ limitacoes_uso: str</text>
+  <text x="730" y="340" class="class-attribute">+ impacto_atividades: str</text>
+  <line x1="720" y1="345" x2="920" y2="345" stroke="#1565c0" stroke-width="1"/>
+  <text x="730" y="360" class="class-method">+ avaliar_limitacoes()</text>
+  
+  <!-- HabilidadesDigitais -->
+  <rect x="150" y="420" width="200" height="140" class="concrete-box"/>
+  <text x="250" y="440" text-anchor="middle" class="class-title" fill="#1565c0">@dataclass</text>
+  <text x="250" y="460" text-anchor="middle" class="class-title" fill="#1565c0">HabilidadesDigitais</text>
+  <line x1="150" y1="465" x2="350" y2="465" stroke="#1565c0" stroke-width="1"/>
+  <text x="160" y="480" class="class-attribute">+ nivel_habilidade: str</text>
+  <text x="160" y="495" class="class-attribute">+ atividades_realizadas: str</text>
+  <text x="160" y="510" class="class-attribute">+ dificuldades: str</text>
+  <text x="160" y="525" class="class-attribute">+ necessidade_ajuda: str</text>
+  <line x1="150" y1="530" x2="350" y2="530" stroke="#1565c0" stroke-width="1"/>
+  <text x="160" y="545" class="class-method">+ calcular_indice_habilidade()</text>
+  
+  <!-- ComercioEletronico -->
+  <rect x="400" y="420" width="200" height="140" class="concrete-box"/>
+  <text x="500" y="440" text-anchor="middle" class="class-title" fill="#1565c0">@dataclass</text>
+  <text x="500" y="460" text-anchor="middle" class="class-title" fill="#1565c0">ComercioEletronico</text>
+  <line x1="400" y1="465" x2="600" y2="465" stroke="#1565c0" stroke-width="1"/>
+  <text x="410" y="480" class="class-attribute">+ percentual_usuarios: str</text>
+  <text x="410" y="495" class="class-attribute">+ produtos_servicos: str</text>
+  <text x="410" y="510" class="class-attribute">+ frequencia_compras: str</text>
+  <text x="410" y="525" class="class-attribute">+ barreiras_uso: str</text>
+  <line x1="400" y1="530" x2="600" y2="530" stroke="#1565c0" stroke-width="1"/>
+  <text x="410" y="545" class="class-method">+ analisar_comportamento_compra()</text>
+  
+  <!-- Classe Agregadora: EstatisticasDAC -->
+  <rect x="650" y="420" width="280" height="180" class="aggregator-box"/>
+  <text x="790" y="440" text-anchor="middle" class="class-title" fill="#c2185b">@dataclass</text>
+  <text x="790" y="460" text-anchor="middle" class="class-title" fill="#c2185b">EstatisticasDAC</text>
+  <line x1="650" y1="465" x2="930" y2="465" stroke="#c2185b" stroke-width="1"/>
+  <text x="660" y="480" class="class-attribute">+ acesso_internet: AcessoInternetDomicilios</text>
+  <text x="660" y="495" class="class-attribute">+ perfil_usuarios: PerfilUsuarios</text>
+  <text x="660" y="510" class="class-attribute">+ perfil_nao_usuarios: PerfilNaoUsuarios</text>
+  <text x="660" y="525" class="class-attribute">+ acesso_exclusivo_celular: AcessoExclusivoCelular</text>
+  <text x="660" y="540" class="class-attribute">+ habilidades_digitais: HabilidadesDigitais</text>
+  <text x="660" y="555" class="class-attribute">+ comercio_eletronico: ComercioEletronico</text>
+  <line x1="650" y1="560" x2="930" y2="560" stroke="#c2185b" stroke-width="1"/>
+  <text x="660" y="575" class="class-method">+ gerar_resumo() -> dict</text>
+  <text x="660" y="590" class="class-method">+ buscar_estatistica(tipo: str)</text>
+  
+  <!-- Linhas de Herança (DadoEstatistico -> subclasses) -->
+  <line x1="450" y1="180" x2="160" y2="250" class="inheritance-line"/>
+  <polygon points="160,250 170,245 170,255" fill="#333"/>
+  
+  <line x1="480" y1="180" x2="390" y2="250" class="inheritance-line"/>
+  <polygon points="390,250 400,245 400,255" fill="#333"/>
+  
+  <line x1="520" y1="180" x2="600" y2="250" class="inheritance-line"/>
+  <polygon points="600,250 610,245 610,255" fill="#333"/>
+  
+  <line x1="550" y1="180" x2="820" y2="250" class="inheritance-line"/>
+  <polygon points="820,250 830,245 830,255" fill="#333"/>
+  
+  <line x1="500" y1="180" x2="250" y2="420" class="inheritance-line"/>
+  <polygon points="250,420 260,415 260,425" fill="#333"/>
+  
+  <line x1="500" y1="180" x2="500" y2="420" class="inheritance-line"/>
+  <polygon points="500,420 510,415 510,425" fill="#333"/>
+  
+  <!-- Linhas de Composição (EstatisticasDAC -> componentes) -->
+  <line x1="650" y1="480" x2="270" y2="320" class="composition-line" stroke-dasharray="5,5"/>
+  <polygon points="650,480 640,475 640,485 650,480" fill="#666"/>
+  
+  <line x1="650" y1="495" x2="480" y2="310" class="composition-line" stroke-dasharray="5,5"/>
+  <polygon points="650,495 640,490 640,500 650,495" fill="#666"/>
+  
+  <line x1="650" y1="510" x2="690" y2="310" class="composition-line" stroke-dasharray="5,5"/>
+  <polygon points="650,510 640,505 640,515 650,510" fill="#666"/>
+  
+  <line x1="650" y1="540" x2="350" y2="480" class="composition-line" stroke-dasharray="5,5"/>
+  <polygon points="650,540 640,535 640,545 650,540" fill="#666"/>
+  
+  <line x1="650" y1="555" x2="600" y2="480" class="composition-line" stroke-dasharray="5,5"/>
+  <polygon points="650,555 640,550 640,560 650,555" fill="#666"/>
+  
+  <!-- Anotações e Características -->
+  <rect x="50" y="650" width="900" height="120" fill="#f5f5f5" stroke="#ccc" stroke-width="1"/>
+  <text x="60" y="670" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">
+    Características das Dataclasses:
+  </text>
+  <text x="60" y="690" font-family="Arial, sans-serif" font-size="11" fill="#555">
+    • @dataclass: Decorador que gera automaticamente __init__, __repr__, __eq__ e outros métodos especiais
+  </text>
+  <text x="60" y="705" font-family="Arial, sans-serif" font-size="11" fill="#555">
+    • Herança: Todas as classes estatísticas herdam de DadoEstatistico, compartilhando comportamentos comuns
+  </text>
+  <text x="60" y="720" font-family="Arial, sans-serif" font-size="11" fill="#555">
+    • Composição: EstatisticasDAC agrega todas as outras dataclasses, fornecendo uma interface unificada
+  </text>
+  <text x="60" y="735" font-family="Arial, sans-serif" font-size="11" fill="#555">
+    • Processamento de Dados: Cada classe possui métodos específicos para processar e validar seus dados
+  </text>
+  <text x="60" y="750" font-family="Arial, sans-serif" font-size="11" fill="#555">
+    • Imutabilidade: Estruturas de dados imutáveis garantem consistência e thread-safety
+  </text>
+  
+  <!-- Legenda -->
+  <rect x="750" y="600" width="200" height="120" fill="#f0f0f0" stroke="#ccc" stroke-width="1"/>
+  <text x="760" y="620" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#333">Legenda:</text>
+  <rect x="760" y="625" width="15" height="10" class="abstract-box"/>
+  <text x="780" y="635" font-family="Arial, sans-serif" font-size="10" fill="#333">Classe Base</text>
+  <rect x="760" y="640" width="15" height="10" class="concrete-box"/>
+  <text x="780" y="650" font-family="Arial, sans-serif" font-size="10" fill="#333">Classe Concreta</text>
+  <rect x="760" y="655" width="15" height="10" class="aggregator-box"/>
+  <text x="780" y="665" font-family="Arial, sans-serif" font-size="10" fill="#333">Classe Agregadora</text>
+  <line x1="760" y1="675" x2="775" y2="675" stroke="#333" stroke-width="2"/>
+  <polygon points="775,675 765,670 765,680" fill="#333"/>
+  <text x="780" y="680" font-family="Arial, sans-serif" font-size="10" fill="#333">Herança</text>
+  <line x1="760" y1="690" x2="775" y2="690" stroke="#666" stroke-width="2" stroke-dasharray="3,3"/>
+  <text x="780" y="695" font-family="Arial, sans-serif" font-size="10" fill="#333">Composição</text>
+</svg>

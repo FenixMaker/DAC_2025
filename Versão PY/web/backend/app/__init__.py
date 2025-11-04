@@ -1,0 +1,1 @@
+"""Aplicação FastAPI para DAC Web v0."""

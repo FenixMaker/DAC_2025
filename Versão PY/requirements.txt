@@ -1,0 +1,17 @@
+# Sistema DAC - Análise de Exclusão Digital no Brasil
+# Autor: Alejandro Alexandre (RA: 197890)
+# Curso: Análise e Desenvolvimento de Sistemas
+# Ano: 2025
+
+pandas>=1.5.0
+sqlalchemy>=1.4.0
+openpyxl>=3.0.0
+matplotlib>=3.5.0
+pdfplumber>=0.7.0
+pytesseract>=0.3.10
+opencv-python>=4.8.0
+Pillow>=10.0.0
+numpy>=1.21.0
+seaborn>=0.11.0
+reportlab>=3.6.0
+psycopg2-binary>=2.9.9

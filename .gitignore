@@ -1,9 +1,22 @@
-# ===================================
-# .gitignore para Sistema DAC
-# Departamento de Administração e Controle
-# ===================================
+# ============================================================================
+# Sistema DAC - .gitignore
+# Autor: Alejandro Alexandre (RA: 197890)
+# Curso: Análise e Desenvolvimento de Sistemas
+# Ano: 2025
+# ============================================================================
 
-# ===== PYTHON =====
+# ============================================================================
+# PYTHON
+# ============================================================================
+
+# Ambiente virtual
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -26,7 +39,6 @@ parts/
 sdist/
 var/
 wheels/
-pip-wheel-metadata/
 share/python-wheels/
 *.egg-info/
 .installed.cfg
@@ -36,10 +48,6 @@ MANIFEST
 # PyInstaller
 *.manifest
 *.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
 
 # Unit test / coverage reports
 htmlcov/
@@ -54,29 +62,7 @@ coverage.xml
 *.py,cover
 .hypothesis/
 .pytest_cache/
-
-# Translations
-*.mo
-*.pot
-
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
-
-# Flask stuff:
-instance/
-.webassets-cache
-
-# Scrapy stuff:
-.scrapy
-
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-target/
+cover/
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -91,24 +77,18 @@ ipython_config.py
 # pipenv
 Pipfile.lock
 
+# poetry
+poetry.lock
+
 # PEP 582
 __pypackages__/
 
-# Celery stuff
+# Celery
 celerybeat-schedule
 celerybeat.pid
 
 # SageMath parsed files
 *.sage.py
-
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
 
 # Spyder project settings
 .spyderproject
@@ -128,177 +108,291 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# ===== SISTEMA DAC ESPECÍFICO =====
+# pytype static type analyzer
+.pytype/
 
-# Bancos de dados
+# Cython debug symbols
+cython_debug/
+
+# ============================================================================
+# NODE.JS / NEXT.JS
+# ============================================================================
+
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Next.js
+/.next/
+/out/
+
+# Production
+/build
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Local env files
+.env*.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Yarn
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# ============================================================================
+# BANCO DE DADOS
+# ============================================================================
+
+# SQLite
 *.db
 *.sqlite
 *.sqlite3
-data/*.db
-data/*.sqlite
-data/*.sqlite3
+*.db-shm
+*.db-wal
 
-# Logs do sistema
-logs/
-*.log
-*.log.*
-
-# Arquivos de configuração sensíveis
-config/secrets.json
-config/database_credentials.json
-config/api_keys.json
-
-# Cache do sistema
-cache/
-*.cache
-.cache/
+# PostgreSQL
+*.dump
+*.sql.gz
 
 # Backups
-backups/
 *.backup
+backups/
 *.bak
 
-# Relatórios gerados
-reports/*.pdf
-reports/*.xlsx
-reports/*.csv
-reports/temp/
+# ============================================================================
+# LOGS E TEMPORÁRIOS
+# ============================================================================
 
-# Dados temporários
-temp/
-tmp/
+# Logs
+logs/
+*.log
+log.txt
+*.log.*
+
+# Arquivos temporários
 *.tmp
+*.temp
+tmp/
+temp/
+.cache/
 
-# Dados de entrada sensíveis
-Dados/*.csv
-Dados/*.xlsx
-Dados/*.xls
-data/raw/
-data/processed/
+# ============================================================================
+# IDEs E EDITORES
+# ============================================================================
 
-# Arquivos de imagem processados
-images/processed/
-images/cache/
-
-# ===== DESENVOLVIMENTO =====
-
-# IDEs
+# Visual Studio Code
 .vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# PyCharm
 .idea/
+*.iml
+*.iws
+.idea_modules/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
 *.swp
 *.swo
 *~
 
-# Jupyter Notebooks
-*.ipynb
+# Emacs
+*~
+\#*\#
+.\#*
 
-# Arquivos de sistema
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+# ============================================================================
+# SISTEMA OPERACIONAL
+# ============================================================================
 
-# ===== WINDOWS =====
-# Windows thumbnail cache files
+# Windows
 Thumbs.db
 Thumbs.db:encryptable
 ehthumbs.db
 ehthumbs_vista.db
-
-# Dump file
 *.stackdump
-
-# Folder config file
 [Dd]esktop.ini
-
-# Recycle Bin used on file shares
 $RECYCLE.BIN/
-
-# Windows Installer files
 *.cab
 *.msi
 *.msix
 *.msm
 *.msp
-
-# Windows shortcuts
 *.lnk
 
-# ===== SEGURANÇA =====
-# Chaves e certificados
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Linux
+*~
+.directory
+.Trash-*
+.nfs*
+
+# ============================================================================
+# ARQUIVOS ESPECÍFICOS DO PROJETO DAC
+# ============================================================================
+
+# Dados sensíveis (não versionar dados reais)
+/recursos/dados/database/*.db
+/recursos/dados/database/*.sqlite
+/Versão PY/data/*.db
+/Versão PY/data/*.sqlite
+/Banco de dados/*.db
+/Banco de dados/*.sqlite
+
+# Exceto arquivos de exemplo
+!/recursos/dados/amostras/*.csv
+!/recursos/dados/amostras/*.xlsx
+
+# Logs do sistema
+/Versão PY/logs/*.log
+/Versão PY/logs/*.json
+
+# Relatórios gerados
+/reports/*.pdf
+/reports/*.xlsx
+/reports/*.csv
+
+# Uploads temporários
+/uploads/
+/temp_files/
+
+# Cache do sistema
+/cache/
+*.cache
+
+# Configurações locais (não sobrescrever configs de outros devs)
+/recursos/configuracoes/local_*.json
+config.local.json
+
+# ============================================================================
+# SEGURANÇA
+# ============================================================================
+
+# Chaves e segredos
 *.key
 *.pem
-*.crt
 *.p12
 *.pfx
+secrets.json
+.secrets/
 
-# Arquivos de senha
-passwords.txt
-credentials.txt
-secrets.txt
-
-# Tokens de API
+# Variáveis de ambiente
+.env
 .env.local
-.env.production
-.env.development
+.env.*.local
 
-# ===== PERFORMANCE =====
-# Arquivos de profiling
-*.prof
+# ============================================================================
+# BUILD E DISTRIBUIÇÃO
+# ============================================================================
 
-# ===== NODE / NEXT =====
-node_modules/
-.next/
-Versão Web/node_modules/
-Versão Web/.next/
-*.profile
+# Arquivos de build
+*.exe
+*.app
+*.dmg
+*.pkg
+*.deb
+*.rpm
 
-# Memory dumps
-*.dmp
+# Exceto scripts de setup
+!setup.bat
+!setup.ps1
 
-# ===== DOCUMENTAÇÃO =====
-# Arquivos temporários de documentação
-docs/build/
+# Instaladores
+instaladores/
+dist/
+build/
+
+# ============================================================================
+# DOCUMENTAÇÃO GERADA
+# ============================================================================
+
+# Sphinx documentation
 docs/_build/
+docs/_static/
+docs/_templates/
 
-# ===== TESTES =====
-# Cobertura de testes
-.coverage
-htmlcov/
-.pytest_cache/
+# ============================================================================
+# TESTES
+# ============================================================================
 
-# Dados de teste
-tests/data/
-test_data/
+# Fixtures de teste (dados temporários)
+/tests/fixtures/temp/
+/tests/integration/temp/
 
-# ===== MONITORAMENTO =====
-# Métricas e estatísticas
-metrics/
-stats/
-monitoring/temp/
+# Resultados de performance
+/tests/performance/results/
 
-# ===== OUTROS =====
-# Arquivos comprimidos
+# ============================================================================
+# OUTROS
+# ============================================================================
+
+# Arquivos comprimidos temporários
 *.zip
+*.tar
+*.tar.gz
 *.rar
 *.7z
-*.tar.gz
 
-# Arquivos grandes
-*.iso
-*.dmg
+# Exceto releases
+!releases/*.zip
 
-# Arquivos de lock
-*.lock
-.lock
-
-# Arquivos de configuração local
-local_config.json
+# Arquivos de configuração de usuário
 user_settings.json
+.user.ini
 
-# ===== NOTA IMPORTANTE =====
-# Este .gitignore foi configurado especificamente para o Sistema DAC
-# Mantenha a segurança dos dados e não commite informações sensíveis
+# Thumbnails
+.thumbnails/
+
+# Lock files (exceto package-lock que pode ser útil)
+# package-lock.json  # Descomentar se preferir não versionar
+pnpm-lock.yaml
+yarn.lock

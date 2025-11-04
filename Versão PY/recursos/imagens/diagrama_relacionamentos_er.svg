@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1000" height="700" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .entity-box { fill: #e3f2fd; stroke: #1976d2; stroke-width: 2; }
+      .relationship-diamond { fill: #fff3e0; stroke: #f57c00; stroke-width: 2; }
+      .attribute-ellipse { fill: #f1f8e9; stroke: #388e3c; stroke-width: 1.5; }
+      .primary-key { text-decoration: underline; font-weight: bold; }
+      .foreign-key { font-style: italic; }
+      .entity-name { font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; fill: #1976d2; }
+      .relationship-name { font-family: Arial, sans-serif; font-size: 12px; font-weight: bold; fill: #f57c00; }
+      .attribute-name { font-family: Arial, sans-serif; font-size: 10px; fill: #388e3c; }
+      .cardinality { font-family: Arial, sans-serif; font-size: 12px; font-weight: bold; fill: #d32f2f; }
+    </style>
+  </defs>
+  
+  <!-- Título -->
+  <text x="500" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#333">
+    Diagrama Entidade-Relacionamento - Sistema DAC
+  </text>
+  
+  <!-- Entidade REGIÃO -->
+  <rect x="50" y="80" width="120" height="80" class="entity-box"/>
+  <text x="110" y="105" text-anchor="middle" class="entity-name">REGIÃO</text>
+  <text x="60" y="125" class="attribute-name primary-key">id</text>
+  <text x="60" y="140" class="attribute-name">nome</text>
+  <text x="60" y="155" class="attribute-name">tipo</text>
+  
+  <!-- Atributos da REGIÃO -->
+  <ellipse cx="30" cy="100" rx="25" ry="15" class="attribute-ellipse"/>
+  <text x="30" y="105" text-anchor="middle" class="attribute-name">id</text>
+  
+  <ellipse cx="30" cy="130" rx="25" ry="15" class="attribute-ellipse"/>
+  <text x="30" y="135" text-anchor="middle" class="attribute-name">nome</text>
+  
+  <ellipse cx="30" cy="160" rx="25" ry="15" class="attribute-ellipse"/>
+  <text x="30" y="165" text-anchor="middle" class="attribute-name">tipo</text>
+  
+  <!-- Linhas dos atributos REGIÃO -->
+  <line x1="50" y1="100" x2="55" y2="100" stroke="#388e3c" stroke-width="1"/>
+  <line x1="50" y1="130" x2="55" y2="130" stroke="#388e3c" stroke-width="1"/>
+  <line x1="50" y1="160" x2="55" y2="160" stroke="#388e3c" stroke-width="1"/>
+  
+  <!-- Relacionamento POSSUI -->
+  <polygon points="250,110 280,120 250,130 220,120" class="relationship-diamond"/>
+  <text x="250" y="125" text-anchor="middle" class="relationship-name">POSSUI</text>
+  
+  <!-- Entidade DOMICÍLIO -->
+  <rect x="350" y="80" width="150" height="120" class="entity-box"/>
+  <text x="425" y="105" text-anchor="middle" class="entity-name">DOMICÍLIO</text>
+  <text x="360" y="125" class="attribute-name primary-key">id</text>
+  <text x="360" y="140" class="attribute-name foreign-key">regiao_id</text>
+  <text x="360" y="155" class="attribute-name">tipo_domicilio</text>
+  <text x="360" y="170" class="attribute-name">renda_familiar</text>
+  <text x="360" y="185" class="attribute-name">acesso_internet</text>
+  
+  <!-- Atributos do DOMICÍLIO -->
+  <ellipse cx="320" cy="110" rx="30" ry="15" class="attribute-ellipse"/>
+  <text x="320" y="115" text-anchor="middle" class="attribute-name">id</text>
+  
+  <ellipse cx="320" cy="140" rx="35" ry="15" class="attribute-ellipse"/>
+  <text x="320" y="145" text-anchor="middle" class="attribute-name">regiao_id</text>
+  
+  <ellipse cx="320" cy="170" rx="40" ry="15" class="attribute-ellipse"/>
+  <text x="320" y="175" text-anchor="middle" class="attribute-name">tipo_domicilio</text>
+  
+  <!-- Linhas dos atributos DOMICÍLIO -->
+  <line x1="350" y1="110" x2="350" y2="110" stroke="#388e3c" stroke-width="1"/>
+  <line x1="350" y1="140" x2="355" y2="140" stroke="#388e3c" stroke-width="1"/>
+  <line x1="350" y1="170" x2="360" y2="170" stroke="#388e3c" stroke-width="1"/>
+  
+  <!-- Relacionamento ABRIGA -->
+  <polygon points="580,140 610,150 580,160 550,150" class="relationship-diamond"/>
+  <text x="580" y="155" text-anchor="middle" class="relationship-name">ABRIGA</text>
+  
+  <!-- Entidade MORADOR -->
+  <rect x="680" y="80" width="150" height="140" class="entity-box"/>
+  <text x="755" y="105" text-anchor="middle" class="entity-name">MORADOR</text>
+  <text x="690" y="125" class="attribute-name primary-key">id</text>
+  <text x="690" y="140" class="attribute-name foreign-key">domicilio_id</text>
+  <text x="690" y="155" class="attribute-name">idade</text>
+  <text x="690" y="170" class="attribute-name">sexo</text>
+  <text x="690" y="185" class="attribute-name">escolaridade</text>
+  <text x="690" y="200" class="attribute-name">usa_internet</text>
+  
+  <!-- Atributos do MORADOR -->
+  <ellipse cx="650" cy="110" rx="25" ry="15" class="attribute-ellipse"/>
+  <text x="650" y="115" text-anchor="middle" class="attribute-name">id</text>
+  
+  <ellipse cx="650" cy="140" rx="35" ry="15" class="attribute-ellipse"/>
+  <text x="650" y="145" text-anchor="middle" class="attribute-name">domicilio_id</text>
+  
+  <ellipse cx="650" cy="170" rx="25" ry="15" class="attribute-ellipse"/>
+  <text x="650" y="175" text-anchor="middle" class="attribute-name">idade</text>
+  
+  <!-- Linhas dos atributos MORADOR -->
+  <line x1="680" y1="110" x2="675" y2="110" stroke="#388e3c" stroke-width="1"/>
+  <line x1="680" y1="140" x2="685" y2="140" stroke="#388e3c" stroke-width="1"/>
+  <line x1="680" y1="170" x2="675" y2="170" stroke="#388e3c" stroke-width="1"/>
+  
+  <!-- Entidade ESTATÍSTICAS -->
+  <rect x="200" y="350" width="180" height="120" class="entity-box"/>
+  <text x="290" y="375" text-anchor="middle" class="entity-name">ESTATÍSTICAS_DAC</text>
+  <text x="210" y="395" class="attribute-name primary-key">id</text>
+  <text x="210" y="410" class="attribute-name">tipo_estatistica</text>
+  <text x="210" y="425" class="attribute-name">valor</text>
+  <text x="210" y="440" class="attribute-name">ano_referencia</text>
+  <text x="210" y="455" class="attribute-name">regiao_id</text>
+  
+  <!-- Entidade ANÁLISE_VULNERABILIDADE -->
+  <rect x="500" y="350" width="200" height="120" class="entity-box"/>
+  <text x="600" y="375" text-anchor="middle" class="entity-name">ANÁLISE_VULNERABILIDADE</text>
+  <text x="510" y="395" class="attribute-name primary-key">id</text>
+  <text x="510" y="410" class="attribute-name">morador_id</text>
+  <text x="510" y="425" class="attribute-name">indice_vulnerabilidade</text>
+  <text x="510" y="440" class="attribute-name">data_analise</text>
+  <text x="510" y="455" class="attribute-name">criterios_aplicados</text>
+  
+  <!-- Relacionamentos principais -->
+  
+  <!-- REGIÃO -> DOMICÍLIO -->
+  <line x1="170" y1="120" x2="220" y2="120" stroke="#333" stroke-width="2"/>
+  <line x1="280" y1="120" x2="350" y2="120" stroke="#333" stroke-width="2"/>
+  <text x="190" y="115" class="cardinality">1</text>
+  <text x="330" y="115" class="cardinality">N</text>
+  
+  <!-- DOMICÍLIO -> MORADOR -->
+  <line x1="500" y1="150" x2="550" y2="150" stroke="#333" stroke-width="2"/>
+  <line x1="610" y1="150" x2="680" y2="150" stroke="#333" stroke-width="2"/>
+  <text x="520" y="145" class="cardinality">1</text>
+  <text x="660" y="145" class="cardinality">N</text>
+  
+  <!-- Relacionamento GERA_ESTATÍSTICAS -->
+  <polygon points="290,280 320,290 290,300 260,290" class="relationship-diamond"/>
+  <text x="290" y="295" text-anchor="middle" class="relationship-name">GERA</text>
+  <line x1="110" y1="160" x2="110" y2="250" stroke="#333" stroke-width="2"/>
+  <line x1="110" y1="250" x2="260" y2="250" stroke="#333" stroke-width="2"/>
+  <line x1="260" y1="250" x2="260" y2="280" stroke="#333" stroke-width="2"/>
+  <line x1="290" y1="300" x2="290" y2="350" stroke="#333" stroke-width="2"/>
+  <text x="115" y="200" class="cardinality">1</text>
+  <text x="295" y="340" class="cardinality">N</text>
+  
+  <!-- Relacionamento ANALISA -->
+  <polygon points="600,280 630,290 600,300 570,290" class="relationship-diamond"/>
+  <text x="600" y="295" text-anchor="middle" class="relationship-name">ANALISA</text>
+  <line x1="755" y1="220" x2="755" y2="250" stroke="#333" stroke-width="2"/>
+  <line x1="755" y1="250" x2="630" y2="250" stroke="#333" stroke-width="2"/>
+  <line x1="630" y1="250" x2="630" y2="280" stroke="#333" stroke-width="2"/>
+  <line x1="600" y1="300" x2="600" y2="350" stroke="#333" stroke-width="2"/>
+  <text x="760" y="240" class="cardinality">1</text>
+  <text x="605" y="340" class="cardinality">1</text>
+  
+  <!-- Índices e Constraints -->
+  <rect x="50" y="550" width="900" height="120" fill="#f5f5f5" stroke="#ccc" stroke-width="1"/>
+  <text x="60" y="570" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#333">
+    Índices e Restrições:
+  </text>
+  <text x="60" y="590" font-family="Arial, sans-serif" font-size="11" fill="#555">
+    • idx_domicilio_regiao: Índice em domicilio.regiao_id para otimizar consultas geográficas
+  </text>
+  <text x="60" y="605" font-family="Arial, sans-serif" font-size="11" fill="#555">
+    • idx_morador_domicilio: Índice em morador.domicilio_id para consultas de moradores por domicílio
+  </text>
+  <text x="60" y="620" font-family="Arial, sans-serif" font-size="11" fill="#555">
+    • idx_morador_idade_sexo: Índice composto para análises demográficas
+  </text>
+  <text x="60" y="635" font-family="Arial, sans-serif" font-size="11" fill="#555">
+    • FK_domicilio_regiao: Chave estrangeira garantindo integridade referencial
+  </text>
+  <text x="60" y="650" font-family="Arial, sans-serif" font-size="11" fill="#555">
+    • FK_morador_domicilio: Chave estrangeira garantindo integridade referencial
+  </text>
+  
+  <!-- Legenda -->
+  <rect x="750" y="500" width="200" height="100" fill="#f0f0f0" stroke="#ccc" stroke-width="1"/>
+  <text x="760" y="520" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#333">Legenda:</text>
+  <rect x="760" y="525" width="15" height="10" class="entity-box"/>
+  <text x="780" y="535" font-family="Arial, sans-serif" font-size="10" fill="#333">Entidade</text>
+  <polygon points="760,545 770,550 760,555 750,550" class="relationship-diamond"/>
+  <text x="780" y="555" font-family="Arial, sans-serif" font-size="10" fill="#333">Relacionamento</text>
+  <ellipse cx="765" cy="570" rx="10" ry="6" class="attribute-ellipse"/>
+  <text x="780" y="575" font-family="Arial, sans-serif" font-size="10" fill="#333">Atributo</text>
+  <text x="760" y="590" font-family="Arial, sans-serif" font-size="10" fill="#333" text-decoration="underline">Chave Primária</text>
+</svg>

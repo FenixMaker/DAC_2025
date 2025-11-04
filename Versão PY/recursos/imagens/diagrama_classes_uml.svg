@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1000" height="800" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .class-box { fill: #f8f9fa; stroke: #333; stroke-width: 2; }
+      .class-title { font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; fill: #333; }
+      .class-attribute { font-family: Arial, sans-serif; font-size: 11px; fill: #555; }
+      .class-method { font-family: Arial, sans-serif; font-size: 11px; fill: #0066cc; }
+      .relationship-line { stroke: #666; stroke-width: 2; fill: none; }
+      .composition-diamond { fill: #333; }
+      .inheritance-arrow { fill: none; stroke: #333; stroke-width: 2; }
+    </style>
+  </defs>
+  
+  <!-- Título -->
+  <text x="500" y="25" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#333">
+    Diagrama de Classes UML - Sistema DAC
+  </text>
+  
+  <!-- Classe Região -->
+  <rect x="50" y="60" width="200" height="120" class="class-box"/>
+  <text x="150" y="80" text-anchor="middle" class="class-title">Região</text>
+  <line x1="50" y1="85" x2="250" y2="85" stroke="#333" stroke-width="1"/>
+  <text x="60" y="100" class="class-attribute">+ id: int</text>
+  <text x="60" y="115" class="class-attribute">+ nome: str</text>
+  <text x="60" y="130" class="class-attribute">+ tipo: str</text>
+  <line x1="50" y1="135" x2="250" y2="135" stroke="#333" stroke-width="1"/>
+  <text x="60" y="150" class="class-method">+ get_domicilios()</text>
+  <text x="60" y="165" class="class-method">+ get_estatisticas()</text>
+  
+  <!-- Classe Domicilio -->
+  <rect x="350" y="60" width="250" height="180" class="class-box"/>
+  <text x="475" y="80" text-anchor="middle" class="class-title">Domicilio</text>
+  <line x1="350" y1="85" x2="600" y2="85" stroke="#333" stroke-width="1"/>
+  <text x="360" y="100" class="class-attribute">+ id: int</text>
+  <text x="360" y="115" class="class-attribute">+ regiao_id: int</text>
+  <text x="360" y="130" class="class-attribute">+ tipo_domicilio: str</text>
+  <text x="360" y="145" class="class-attribute">+ renda_familiar: float</text>
+  <text x="360" y="160" class="class-attribute">+ acesso_internet: bool</text>
+  <text x="360" y="175" class="class-attribute">+ dispositivos: list</text>
+  <line x1="350" y1="180" x2="600" y2="180" stroke="#333" stroke-width="1"/>
+  <text x="360" y="195" class="class-method">+ get_moradores()</text>
+  <text x="360" y="210" class="class-method">+ calcular_vulnerabilidade()</text>
+  <text x="360" y="225" class="class-method">+ get_dispositivos_ativos()</text>
+  
+  <!-- Classe Morador -->
+  <rect x="700" y="60" width="250" height="200" class="class-box"/>
+  <text x="825" y="80" text-anchor="middle" class="class-title">Morador</text>
+  <line x1="700" y1="85" x2="950" y2="85" stroke="#333" stroke-width="1"/>
+  <text x="710" y="100" class="class-attribute">+ id: int</text>
+  <text x="710" y="115" class="class-attribute">+ domicilio_id: int</text>
+  <text x="710" y="130" class="class-attribute">+ idade: int</text>
+  <text x="710" y="145" class="class-attribute">+ sexo: str</text>
+  <text x="710" y="160" class="class-attribute">+ escolaridade: str</text>
+  <text x="710" y="175" class="class-attribute">+ usa_internet: bool</text>
+  <text x="710" y="190" class="class-attribute">+ habilidades_digitais: int</text>
+  <line x1="700" y1="195" x2="950" y2="195" stroke="#333" stroke-width="1"/>
+  <text x="710" y="210" class="class-method">+ is_vulneravel()</text>
+  <text x="710" y="225" class="class-method">+ get_perfil_uso()</text>
+  <text x="710" y="240" class="class-method">+ calcular_exclusao_digital()</text>
+  
+  <!-- Classe AnaliseVulnerabilidade -->
+  <rect x="350" y="300" width="300" height="140" class="class-box"/>
+  <text x="500" y="320" text-anchor="middle" class="class-title">AnaliseVulnerabilidade</text>
+  <line x1="350" y1="325" x2="650" y2="325" stroke="#333" stroke-width="1"/>
+  <text x="360" y="340" class="class-attribute">&lt;&lt;static&gt;&gt;</text>
+  <line x1="350" y1="345" x2="650" y2="345" stroke="#333" stroke-width="1"/>
+  <text x="360" y="360" class="class-method">+ identificar_vulneraveis()</text>
+  <text x="360" y="375" class="class-method">+ calcular_acesso_internet()</text>
+  <text x="360" y="390" class="class-method">+ gerar_relatorio_exclusao()</text>
+  <text x="360" y="405" class="class-method">+ analisar_habilidades_digitais()</text>
+  <text x="360" y="420" class="class-method">+ calcular_indice_vulnerabilidade()</text>
+  
+  <!-- Classe DadoEstatistico (Base) -->
+  <rect x="50" y="500" width="200" height="120" class="class-box"/>
+  <text x="150" y="520" text-anchor="middle" class="class-title">DadoEstatistico</text>
+  <line x1="50" y1="525" x2="250" y2="525" stroke="#333" stroke-width="1"/>
+  <text x="60" y="540" class="class-attribute">+ valor: str</text>
+  <text x="60" y="555" class="class-attribute">+ unidade: str</text>
+  <line x1="50" y1="560" x2="250" y2="560" stroke="#333" stroke-width="1"/>
+  <text x="60" y="575" class="class-method">+ processar_valor()</text>
+  <text x="60" y="590" class="class-method">+ validar_dados()</text>
+  <text x="60" y="605" class="class-method">+ to_dict()</text>
+  
+  <!-- Classe AcessoInternetDomicilios -->
+  <rect x="300" y="500" width="250" height="140" class="class-box"/>
+  <text x="425" y="520" text-anchor="middle" class="class-title">AcessoInternetDomicilios</text>
+  <line x1="300" y1="525" x2="550" y2="525" stroke="#333" stroke-width="1"/>
+  <text x="310" y="540" class="class-attribute">+ percentual_acesso: float</text>
+  <text x="310" y="555" class="class-attribute">+ total_domicilios: int</text>
+  <text x="310" y="570" class="class-attribute">+ ano_referencia: int</text>
+  <line x1="300" y1="575" x2="550" y2="575" stroke="#333" stroke-width="1"/>
+  <text x="310" y="590" class="class-method">+ calcular_evolucao()</text>
+  <text x="310" y="605" class="class-method">+ calcular_crescimento()</text>
+  <text x="310" y="620" class="class-method">+ gerar_projecao()</text>
+  
+  <!-- Classe EstatisticasDAC -->
+  <rect x="600" y="500" width="300" height="160" class="class-box"/>
+  <text x="750" y="520" text-anchor="middle" class="class-title">EstatisticasDAC</text>
+  <line x1="600" y1="525" x2="900" y2="525" stroke="#333" stroke-width="1"/>
+  <text x="610" y="540" class="class-attribute">+ acesso_internet: AcessoInternetDomicilios</text>
+  <text x="610" y="555" class="class-attribute">+ perfil_usuarios: PerfilUsuarios</text>
+  <text x="610" y="570" class="class-attribute">+ habilidades_digitais: HabilidadesDigitais</text>
+  <text x="610" y="585" class="class-attribute">+ comercio_eletronico: ComercioEletronico</text>
+  <line x1="600" y1="590" x2="900" y2="590" stroke="#333" stroke-width="1"/>
+  <text x="610" y="605" class="class-method">+ gerar_resumo()</text>
+  <text x="610" y="620" class="class-method">+ buscar_estatistica()</text>
+  <text x="610" y="635" class="class-method">+ exportar_dados()</text>
+  <text x="610" y="650" class="class-method">+ calcular_indices_exclusao()</text>
+  
+  <!-- Relacionamentos -->
+  
+  <!-- Região -> Domicilio (1:N) -->
+  <line x1="250" y1="120" x2="350" y2="120" class="relationship-line"/>
+  <text x="290" y="115" font-family="Arial, sans-serif" font-size="10" fill="#666">1</text>
+  <text x="330" y="115" font-family="Arial, sans-serif" font-size="10" fill="#666">*</text>
+  <text x="280" y="135" font-family="Arial, sans-serif" font-size="10" fill="#666">possui</text>
+  
+  <!-- Domicilio -> Morador (1:N) -->
+  <line x1="600" y1="120" x2="700" y2="120" class="relationship-line"/>
+  <text x="620" y="115" font-family="Arial, sans-serif" font-size="10" fill="#666">1</text>
+  <text x="680" y="115" font-family="Arial, sans-serif" font-size="10" fill="#666">*</text>
+  <text x="630" y="135" font-family="Arial, sans-serif" font-size="10" fill="#666">abriga</text>
+  
+  <!-- Domicilio -> AnaliseVulnerabilidade (dependência) -->
+  <line x1="475" y1="240" x2="475" y2="300" class="relationship-line" stroke-dasharray="5,5"/>
+  <text x="480" y="270" font-family="Arial, sans-serif" font-size="10" fill="#666">usa</text>
+  
+  <!-- DadoEstatistico -> AcessoInternetDomicilios (herança) -->
+  <line x1="250" y1="560" x2="300" y2="560" class="inheritance-arrow"/>
+  <polygon points="300,560 290,555 290,565" fill="#333"/>
+  
+  <!-- AcessoInternetDomicilios -> EstatisticasDAC (composição) -->
+  <line x1="550" y1="570" x2="600" y2="570" class="relationship-line"/>
+  <polygon points="550,570 560,565 560,575 550,570" class="composition-diamond"/>
+  <text x="570" y="565" font-family="Arial, sans-serif" font-size="10" fill="#666">contém</text>
+  
+  <!-- Legenda -->
+  <rect x="50" y="700" width="300" height="80" fill="#f0f0f0" stroke="#ccc" stroke-width="1"/>
+  <text x="60" y="720" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#333">Legenda:</text>
+  <line x1="60" y1="730" x2="90" y2="730" stroke="#333" stroke-width="2"/>
+  <text x="95" y="735" font-family="Arial, sans-serif" font-size="10" fill="#333">Associação</text>
+  <line x1="60" y1="745" x2="90" y2="745" stroke="#333" stroke-width="2" stroke-dasharray="5,5"/>
+  <text x="95" y="750" font-family="Arial, sans-serif" font-size="10" fill="#333">Dependência</text>
+  <line x1="60" y1="760" x2="85" y2="760" stroke="#333" stroke-width="2"/>
+  <polygon points="85,760 75,755 75,765" fill="#333"/>
+  <text x="95" y="765" font-family="Arial, sans-serif" font-size="10" fill="#333">Herança</text>
+</svg>

@@ -1,33 +1,181 @@
-# 🏛️ Sistema DAC — Departamento de Administração e Controle
+# 🏛️ Sistema DAC — Digital Analysis and Control
 
-## 📋 Introdução
+<div align="center">
 
-O Sistema DAC é uma aplicação para análise de dados de acesso e exclusão digital no Brasil. Ele reúne ferramentas de importação, processamento, validação, análise estatística e geração de relatórios, além de uma interface gráfica para uso por analistas do DAC.
+**Sistema Acadêmico para Análise de Exclusão Digital no Brasil**
 
-- Propósito: apoiar decisões do DAC por meio de dados confiáveis e relatórios consistentes.
-- Principais funcionalidades:
-  - Importação de dados (CSV, Excel, PDF) e limpeza/validação automática
-  - Análises estatísticas com métricas de exclusão digital
-  - Geração de relatórios (PDF, CSV, XLSX, JSON)
-  - Interface gráfica com navegação e acessibilidade
-  - Suporte a SQLite e PostgreSQL, backup e migração
-- Tecnologias utilizadas:
-  - Linguagens: `Python`
-  - UI: `Tkinter`
-  - Banco de dados: `SQLite`, `PostgreSQL` (via `SQLAlchemy`)
-  - Bibliotecas: `pandas`, `openpyxl`, `pdfplumber`, `reportlab`, `pytest`
-  - Versão Web (opcional): `Node.js` + `Next.js`
+[![Python](https://img.shields.io/badge/Python-3.13+-blue.svg)](https://www.python.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-green.svg)](https://nodejs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black.svg)](https://nextjs.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688.svg)](https://fastapi.tiangolo.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+**Autor:** Alejandro Alexandre (RA: 197890)  
+**Curso:** Análise e Desenvolvimento de Sistemas  
+**Ano:** 2025
+
+</div>
+
+---
+
+## 📋 Sobre o Projeto
+
+O **Sistema DAC** é uma aplicação completa desenvolvida para análise de dados relacionados à exclusão digital no Brasil, reunindo ferramentas de importação, processamento, validação, análise estatística e geração de relatórios.
+
+### 🎯 Propósito
+Apoiar decisões estratégicas por meio de dados confiáveis e relatórios consistentes sobre acesso digital no Brasil.
+
+### ✨ Características Principais
+
+- 📊 **Análise de Dados Completa**
+  - Importação de múltiplos formatos (CSV, Excel, PDF)
+  - Limpeza e validação automática
+  - Métricas estatísticas avançadas
+  
+- 📈 **Visualizações e Relatórios**
+  - Gráficos interativos
+  - Exportação em PDF, CSV, XLSX, JSON
+  - Dashboard web moderno
+  
+- 🖥️ **Duas Versões Disponíveis**
+  - **Desktop:** Interface Tkinter standalone
+  - **Web:** Next.js + FastAPI (frontend moderno + API REST)
+  
+- 💾 **Gerenciamento de Dados**
+  - Suporte a SQLite e PostgreSQL
+  - Sistema de backup e migração
+  - Otimizações de performance
+
+### 🛠️ Stack Tecnológica
+
+**Backend & Desktop:**
+- Python 3.13+
+- Tkinter (UI Desktop)
+- FastAPI (API REST)
+- SQLAlchemy (ORM)
+- Pandas, NumPy (Análise de dados)
+- Matplotlib, Seaborn (Visualização)
+
+**Frontend Web:**
+- Next.js 16 (React 19)
+- TypeScript
+- TailwindCSS
+- Radix UI
+- Recharts
+
+**Banco de Dados:**
+- SQLite (desenvolvimento)
+- PostgreSQL (produção - opcional)
+
+---
+
+## 🚀 Instalação Rápida
+
+### Pré-requisitos
+
+- [Python 3.13+](https://www.python.org/downloads/)
+- [Node.js 18+](https://nodejs.org/)
+- [Git](https://git-scm.com/)
+
+### Setup Automático (Recomendado)
+
+```bash
+# 1. Clonar o repositório
+git clone https://github.com/FenixMaker/DAC_2025.git
+cd DAC_2025
+
+# 2. Executar setup automático
+setup.bat
+```
+
+**O script irá:**
+- ✅ Verificar pré-requisitos
+- ✅ Criar ambiente virtual Python
+- ✅ Instalar todas as dependências (Python + Node.js)
+- ✅ Configurar estrutura de diretórios
+- ✅ Criar scripts de atalho
+
+**Tempo estimado:** 10-15 minutos
+
+📖 **Guias disponíveis:**
+- [Instalação Rápida](docs/guias/INSTALACAO_RAPIDA.md) - Setup em 5 minutos
+- [Manual de Execução](docs/guias/MANUAL_EXECUCAO.md) - Guia completo e detalhado
+- [Índice de Documentação](docs/INDICE_DOCUMENTACAO.md) - Navegação completa
+
+---
+
+## 🖱️ Executáveis Prontos para Uso
+
+### Iniciar o Sistema (Duplo Clique!)
+
+Após executar o `setup.bat`, você terá arquivos prontos na raiz do projeto:
+
+**Versão Web:**
+```
+Iniciar-Web.bat       ← Duplo clique para iniciar versão web
+```
+- Inicia backend (FastAPI) automaticamente
+- Inicia frontend (Next.js) automaticamente  
+- Abre navegador em http://localhost:3002
+
+**Versão Desktop:**
+```
+Iniciar-Desktop.bat   ← Duplo clique para iniciar versão desktop
+```
+- Inicia aplicação Tkinter
+- Interface gráfica nativa do Windows
+
+### 🔧 Criar Executáveis .EXE (Opcional)
+
+Se preferir arquivos `.exe` ao invés de `.bat`:
+
+```bash
+# Método 1: Compilação automática com PyInstaller
+cd scripts\build
+build_executables.bat
+
+# Resultado:
+# - Iniciar-Web.exe (na raiz)
+# - Iniciar-Desktop.exe (na raiz)
+```
+
+📖 **Guia completo:** [Como Criar Executáveis](docs/guias/CRIAR_EXECUTAVEIS.md)
+
+---
 
 ## ⚙️ Configuração
 
+### 🚀 Instalação Automática (Recomendado)
+
+**Após clonar do GitHub, execute:**
+
+```bash
+# Windows - Opção 1 (BAT)
+setup.bat
+
+# Windows - Opção 2 (PowerShell)
+powershell -ExecutionPolicy Bypass -File setup.ps1
+```
+
+O script automático irá:
+- ✅ Verificar pré-requisitos (Python, Node.js, npm)
+- ✅ Criar ambiente virtual Python
+- ✅ Instalar todas as dependências (Python + Node.js)
+- ✅ Configurar estrutura de diretórios
+- ✅ Criar scripts de atalho para iniciar o sistema
+
+**Tempo estimado:** 10-15 minutos
+
+📖 **Guia completo:** Consulte [`INSTALACAO_RAPIDA.md`](INSTALACAO_RAPIDA.md)
+
 ### Requisitos do sistema
-- Python `3.8+`
+- Python `3.13+` ⚠️ **Obrigatório**
+- Node.js `18+` (para versão web)
 - `pip` e `venv`
 - Git
-- Node.js `18+` (para executar a versão web; opcional)
-- PostgreSQL (opcional, para ambientes que exigem banco relacional)
+- PostgreSQL (opcional, para produção)
 
-### Passos de instalação (Desktop/Python)
+### Instalação Manual (Desktop/Python)
 
 ```bash
 # 1) Clonar o repositório
@@ -41,8 +189,19 @@ python -m venv .venv
 # Linux/macOS
 # source .venv/bin/activate
 
-# 3) Instalar dependências
+# 3) Instalar dependências Python
+cd "Versão PY"
 pip install -r requirements.txt
+
+# 4) Instalar dependências do Backend (se usar versão web)
+cd web\backend
+pip install -r requirements.txt
+cd ..\..
+
+# 5) Instalar dependências do Frontend (se usar versão web)
+cd "Versão Web"
+npm install --legacy-peer-deps
+cd ..
 ```
 
 ### Configurações do sistema
@@ -63,27 +222,84 @@ Exemplo de `config/database_config.json`:
     "port": 5432,
     "database": "dac_db",
     "user": "dac_user"
-  }
 }
 ```
 
-### Passos de instalação (Versão Web/Next.js — opcional)
+### Configuração da Versão Web (opcional)
 ```bash
 cd "Versão Web"
-npm install
-npm run dev
+npm install --legacy-peer-deps
 ```
-A aplicação web inicia em `http://localhost:3000/` por padrão.
+
+**Arquivo `.env.local`** (criado automaticamente pelo setup):
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_APP_NAME=Sistema DAC
+NEXT_PUBLIC_APP_VERSION=1.0.0
+```
 
 ## ▶️ Uso
 
-### Executar a versão Desktop (UI)
+### 🚀 Início Rápido (Após Setup Automático)
+
+#### Versão Web (Recomendado)
+```bash
+# Windows - BAT
+Iniciar-Web.bat
+
+# Windows - PowerShell
+.\Iniciar-Web.ps1
+```
+
+Acesse: http://localhost:3002
+
+**URLs Disponíveis:**
+- Frontend: http://localhost:3002
+- Backend API: http://localhost:8000
+- Documentação API: http://localhost:8000/docs
+
+#### Versão Desktop
+```bash
+# Windows - BAT
+Iniciar-Desktop.bat
+
+# Windows - PowerShell
+.\Iniciar-Desktop.ps1
+```
+
+#### Parar Servidores
+```bash
+# Windows - BAT
+Parar-Servidores.bat
+
+# Windows - PowerShell
+.\Parar-Servidores.ps1
+```
+
+### Execução Manual
+
+#### Versão Desktop (UI Tkinter)
 ```bash
 # Dentro do ambiente virtual
-python main.py
+cd "Versão PY"
+..\\.venv\Scripts\python.exe main.py
 ```
 - O sistema carrega a interface principal do DAC.
 - Logs e saídas ficam disponíveis conforme configurado em `config/logging_config.json`.
+
+#### Versão Web (Manual)
+
+**Terminal 1 - Backend:**
+```bash
+cd "Versão PY\web\backend"
+..\..\..\\.venv\Scripts\python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+**Terminal 2 - Frontend:**
+```bash
+cd "Versão Web"
+npm run start-frontend
+```
 
 ### Executar testes
 ```bash
@@ -94,12 +310,6 @@ python -m pytest tests/
 python -m pytest tests/unit/
 python -m pytest tests/integration/
 python -m pytest tests/performance/
-```
-
-### Versão Web (dev)
-```bash
-cd "Versão Web"
-npm run dev
 ```
 
 ### Exemplos e saída
@@ -128,6 +338,43 @@ docs(readme): atualizar instruções de instalação
 - Implemente a mudança e garanta que os testes passam.
 - Abra um Pull Request com descrição clara e referência às issues.
 
+---
+
+## 📚 Documentação
+
+### 📖 Documentação Completa
+
+O projeto possui documentação abrangente organizada em [`docs/`](docs/):
+
+| Documento | Descrição | Link |
+|-----------|-----------|------|
+| **Índice de Documentação** | Mapa completo de toda documentação | [📑 Ver](docs/INDICE_DOCUMENTACAO.md) |
+| **Estrutura Detalhada** | Organização completa do projeto | [📋 Ver](docs/ESTRUTURA_DETALHADA.md) |
+| **Árvore Visual** | Visualização rápida da estrutura | [🌳 Ver](docs/ARVORE_VISUAL.md) |
+| **Instalação Rápida** | Guia de instalação em 5 minutos | [⚡ Ver](docs/guias/INSTALACAO_RAPIDA.md) |
+| **Manual de Execução** | Guia completo de uso | [📖 Ver](docs/guias/MANUAL_EXECUCAO.md) |
+| **Testes de Versões** | Relatório de testes funcionais | [✅ Ver](docs/relatorios/TESTE_VERSOES.md) |
+| **Sistema de Setup** | Como funciona o setup automático | [🔧 Ver](docs/relatorios/SETUP_AUTOMATICO_RESUMO.md) |
+
+### 🗂️ Navegação Rápida
+
+**Para Novos Usuários:**
+1. Leia este README
+2. Execute [`setup.bat`](setup.bat)
+3. Consulte o [Manual de Execução](docs/guias/MANUAL_EXECUCAO.md)
+
+**Para Desenvolvedores:**
+1. Veja a [Estrutura Detalhada](docs/ESTRUTURA_DETALHADA.md)
+2. Leia [CONTRIBUTING.md](CONTRIBUTING.md)
+3. Explore o [Índice de Documentação](docs/INDICE_DOCUMENTACAO.md)
+
+**Para Professores/Avaliadores:**
+1. Leia a [Documentação Geral](docs/DOCUMENTACAO_GERAL_PROJETO_DAC.md)
+2. Veja os [Testes Realizados](docs/relatorios/TESTE_VERSOES.md)
+3. Entenda o [Sistema de Setup](docs/relatorios/SETUP_AUTOMATICO_RESUMO.md)
+
+---
+
 ## 📄 Licença
 
 Este projeto é de uso interno do Departamento de Administração e Controle (DAC) e pode ser utilizado em contexto acadêmico/educacional conforme autorização do DAC.
@@ -136,3 +383,25 @@ Este projeto é de uso interno do Departamento de Administração e Controle (DA
 - Distribuição: não autorizada sem consentimento do DAC.
 
 Para dúvidas, abra uma issue no GitHub ou contate a equipe responsável.
+
+---
+
+## 📞 Contato e Suporte
+
+**Desenvolvedor:** Alejandro Alexandre  
+**RA:** 197890  
+**Curso:** Análise e Desenvolvimento de Sistemas  
+**Ano:** 2025  
+
+**Repositório:** [DAC_2025](https://github.com/FenixMaker/DAC_2025)  
+**Issues:** [Reportar Problema](https://github.com/FenixMaker/DAC_2025/issues)
+
+---
+
+<div align="center">
+
+**⭐ Sistema DAC - Análise de Exclusão Digital no Brasil ⭐**
+
+Desenvolvido com ❤️ por Alejandro Alexandre
+
+</div>

@@ -1,0 +1,18 @@
+{
+  "error_tracking": {
+    "enabled": true,
+    "log_level": "ERROR",
+    "max_errors_per_hour": 100,
+    "alert_threshold": 10
+  },
+  "performance_monitoring": {
+    "enabled": true,
+    "slow_query_threshold": 5.0,
+    "memory_threshold": 500
+  },
+  "health_checks": {
+    "database_connection": true,
+    "file_system_access": true,
+    "memory_usage": true
+  }
+}

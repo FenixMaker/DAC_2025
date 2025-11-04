@@ -1,0 +1,1 @@
+"""Pacote backend para DAC Web v0 (FastAPI)."""
