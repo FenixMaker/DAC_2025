@@ -1,0 +1,8 @@
+{
+  "enabled": true,
+  "max_size": 1000,
+  "default_ttl": 3600,
+  "query_cache_ttl": 1800,
+  "stats_cache_ttl": 300,
+  "report_cache_ttl": 7200
+}
