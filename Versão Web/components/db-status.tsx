@@ -88,7 +88,14 @@ export function DbStatusDashboard() {
         <Card>
           <CardHeader className="pb-2"><CardTitle className="text-sm text-muted-foreground flex items-center gap-2"><Server className="h-4 w-4"/>Servidor</CardTitle></CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{new Date(status.server_time || '').toLocaleString('pt-BR') || '—'}</div>
+            {(() => {
+              const d = status.server_time ? new Date(status.server_time) : null
+              const valid = d && !isNaN(d.getTime())
+              const text = valid ? d!.toLocaleString('pt-BR') : '—'
+              return (
+                <div className="text-2xl font-bold">{text}</div>
+              )
+            })()}
             <div className="text-sm text-muted-foreground flex items-center gap-2"><Clock className="h-4 w-4"/>Uptime: {status.uptime || '—'}</div>
           </CardContent>
         </Card>

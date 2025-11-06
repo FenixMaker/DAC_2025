@@ -16,10 +16,15 @@ class ModernCard(ttk.Frame):
         super().__init__(parent, style='Card.TFrame', **kwargs)
         
         self.configure(padding=theme.card_padding)
-        
+
+        # Header sempre usa pack dentro do próprio card
         if title:
             title_label = ttk.Label(self, text=title, style='Heading.TLabel')
             title_label.pack(anchor='w', pady=(0, theme.spacing_lg))
+
+        # Área de conteúdo isolada para permitir grid interno sem conflitar com pack
+        self.content = ttk.Frame(self, style='Card.TFrame')
+        self.content.pack(fill='both', expand=True)
 
 
 class KPICard(ttk.Frame):

@@ -55,8 +55,14 @@ def check_prerequisites():
     if web_path.exists() and not (web_path / "node_modules").exists():
         errors.append("Dependências do Node.js não instaladas!\n\nExecute primeiro: setup.bat")
     
-    # Verifica venv Python
-    if py_path.exists() and not (py_path / ".venv").exists():
+    # Verifica venv Python (tenta na raiz primeiro)
+    venv_exists = False
+    if (project_root / ".venv").exists():
+        venv_exists = True
+    elif py_path.exists() and (py_path / ".venv").exists():
+        venv_exists = True
+    
+    if not venv_exists:
         errors.append("Ambiente virtual Python não criado!\n\nExecute primeiro: setup.bat")
     
     return errors
@@ -82,13 +88,29 @@ def kill_processes():
 
 def start_backend(project_root):
     """Inicia o backend FastAPI"""
-    py_path = project_root / "Versão PY"
-    venv_python = py_path / ".venv" / "Scripts" / "python.exe"
+    backend_path = project_root / "Versão PY" / "web" / "backend"
     
-    os.chdir(str(py_path))
+    # Tenta encontrar o ambiente virtual
+    venv_paths = [
+        project_root / ".venv" / "Scripts" / "python.exe",  # .venv na raiz
+        project_root / "Versão PY" / ".venv" / "Scripts" / "python.exe",  # .venv na Versão PY
+    ]
+    
+    venv_python = None
+    for path in venv_paths:
+        if path.exists():
+            venv_python = path
+            break
+    
+    if not venv_python:
+        print(f"   ⚠️  Ambiente virtual Python não encontrado!")
+        print(f"   Tentando usar Python do sistema...")
+        venv_python = "python"
+    
+    os.chdir(str(backend_path))
     
     # Inicia o backend em uma nova janela
-    cmd = f'start "DAC Backend (FastAPI)" cmd /k "{venv_python}" -m uvicorn web.backend.main:app --reload --port 8000'
+    cmd = f'start "DAC Backend (FastAPI)" cmd /k "{venv_python}" -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000'
     subprocess.Popen(cmd, shell=True)
     
     return True
@@ -99,8 +121,8 @@ def start_frontend(project_root):
     
     os.chdir(str(web_path))
     
-    # Inicia o frontend em uma nova janela
-    cmd = 'start "DAC Frontend (Next.js)" cmd /k npm run dev -- --port 3002'
+    # Inicia o frontend em uma nova janela - usando dev:frontend que não tenta iniciar o backend
+    cmd = 'start "DAC Frontend (Next.js)" cmd /k npm run dev:frontend'
     subprocess.Popen(cmd, shell=True)
     
     return True

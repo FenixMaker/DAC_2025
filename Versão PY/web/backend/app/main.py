@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .routers.health import router as health_router
 from .routers.estatisticas import router as estatisticas_router
 from .routers.individuos import router as individuos_router
+from .routers.db_status import router as db_status_router
 
 app = FastAPI(title="DAC Web v0", version="0.1.0")
 
@@ -26,3 +27,4 @@ app.add_middleware(
 app.include_router(health_router, prefix="/api", tags=["health"])
 app.include_router(estatisticas_router, prefix="/api/estatisticas", tags=["estatisticas"])
 app.include_router(individuos_router, prefix="/api", tags=["individuos"])
+app.include_router(db_status_router, prefix="/api", tags=["db"])

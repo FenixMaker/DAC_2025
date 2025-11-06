@@ -48,8 +48,8 @@ class DbStatusWindow:
         # Metrics panel
         metrics_frame = ModernCard(container, title="Métricas")
         metrics_frame.grid(row=1, column=0, sticky='nsew', padx=(0, theme.spacing_md))
-        metrics_frame.columnconfigure(0, weight=1)
-        metrics_frame.columnconfigure(1, weight=1)
+        metrics_frame.content.columnconfigure(0, weight=1)
+        metrics_frame.content.columnconfigure(1, weight=1)
 
         self.metrics_vars = {
             'sqlite_version': tk.StringVar(value='-'),
@@ -75,7 +75,7 @@ class DbStatusWindow:
         for i, (label, key) in enumerate(labels):
             r = i // 2
             c = (i % 2) * 1
-            frame = ttk.Frame(metrics_frame, style='Card.TFrame')
+            frame = ttk.Frame(metrics_frame.content, style='Card.TFrame')
             frame.grid(row=r, column=c, sticky='ew', padx=theme.spacing_sm, pady=theme.spacing_sm)
             # KPI estilizado
             kpi = KPICard(frame, label_text=label, value=self.metrics_vars[key].get(), icon='info')
@@ -86,8 +86,8 @@ class DbStatusWindow:
         # Performance panel
         perf_frame = ModernCard(container, title="Desempenho")
         perf_frame.grid(row=1, column=1, sticky='nsew')
-        perf_frame.columnconfigure(0, weight=1)
-        perf_frame.columnconfigure(1, weight=1)
+        perf_frame.content.columnconfigure(0, weight=1)
+        perf_frame.content.columnconfigure(1, weight=1)
 
         self.perf_vars = {
             'page_count': tk.StringVar(value='0'),
@@ -113,7 +113,7 @@ class DbStatusWindow:
         for i, (label, key) in enumerate(perf_labels):
             r = i // 2
             c = (i % 2) * 1
-            frame = ttk.Frame(perf_frame, style='Card.TFrame')
+            frame = ttk.Frame(perf_frame.content, style='Card.TFrame')
             frame.grid(row=r, column=c, sticky='ew', padx=theme.spacing_sm, pady=theme.spacing_sm)
             kpi = KPICard(frame, label_text=label, value=self.perf_vars[key].get(), icon='trending')
             setattr(self, f"kpi_perf_{key}", kpi)
@@ -122,9 +122,9 @@ class DbStatusWindow:
         # Top tables panel
         tables_frame = ModernCard(container, title="Top Tabelas (por linhas)")
         tables_frame.grid(row=2, column=0, columnspan=2, sticky='nsew', pady=(theme.spacing_md, 0))
-        tables_frame.columnconfigure(0, weight=1)
+        tables_frame.content.columnconfigure(0, weight=1)
 
-        self.tables_tree = ttk.Treeview(tables_frame, columns=("tabela", "linhas"), show='headings', height=6)
+        self.tables_tree = ttk.Treeview(tables_frame.content, columns=("tabela", "linhas"), show='headings', height=6)
         self.tables_tree.heading("tabela", text="Tabela")
         self.tables_tree.heading("linhas", text="Linhas")
         self.tables_tree.column("tabela", width=300)
