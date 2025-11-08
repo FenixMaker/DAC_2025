@@ -1,61 +1,8 @@
 {
-  "version": 1,
-  "disable_existing_loggers": false,
-  "formatters": {
-    "standard": {
-      "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-      "datefmt": "%Y-%m-%d %H:%M:%S"
-    },
-    "detailed": {
-      "format": "%(asctime)s - %(name)s - %(levelname)s - %(module)s:%(funcName)s:%(lineno)d - %(message)s",
-      "datefmt": "%Y-%m-%d %H:%M:%S"
-    },
-    "json": {
-      "class": "pythonjsonlogger.jsonlogger.JsonFormatter",
-      "format": "%(asctime)s %(name)s %(levelname)s %(module)s %(funcName)s %(lineno)d %(message)s"
-    }
-  },
-  "handlers": {
-    "console": {
-      "class": "logging.StreamHandler",
-      "level": "INFO",
-      "formatter": "standard",
-      "stream": "ext://sys.stdout"
-    },
-    "file": {
-      "class": "logging.handlers.RotatingFileHandler",
-      "level": "DEBUG",
-      "formatter": "detailed",
-      "filename": "F:\\Sites\\DAC\\logs\\dac_detailed.log",
-      "maxBytes": 10485760,
-      "backupCount": 5,
-      "encoding": "utf-8"
-    },
-    "error_file": {
-      "class": "logging.handlers.RotatingFileHandler",
-      "level": "ERROR",
-      "formatter": "detailed",
-      "filename": "F:\\Sites\\DAC\\logs\\dac_errors.log",
-      "maxBytes": 5242880,
-      "backupCount": 10,
-      "encoding": "utf-8"
-    }
-  },
-  "loggers": {
-    "DAC": {
-      "level": "DEBUG",
-      "handlers": [
-        "console",
-        "file",
-        "error_file"
-      ],
-      "propagate": false
-    }
-  },
-  "root": {
-    "level": "INFO",
-    "handlers": [
-      "console"
-    ]
-  }
+  "level": "INFO",
+  "file_path": "logs/dac.log",
+  "max_size_mb": 10,
+  "backup_count": 5,
+  "console_output": true,
+  "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 }

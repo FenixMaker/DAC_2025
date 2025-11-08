@@ -331,7 +331,15 @@ class ModernTooltip:
         if self.tooltip_window or not self.text:
             return
         
-        x, y, _, _ = self.widget.bbox('insert')
+        # Calcular posição de forma resiliente (nem todos widgets têm 'insert')
+        try:
+            bbox = self.widget.bbox('insert')
+            if bbox:
+                x, y = bbox[0], bbox[1]
+            else:
+                raise Exception('no bbox')
+        except Exception:
+            x, y = 0, 0
         x = x + self.widget.winfo_rootx() + 25
         y = y + self.widget.winfo_rooty() + 25
         
@@ -339,13 +347,18 @@ class ModernTooltip:
         tw.wm_overrideredirect(True)
         tw.wm_geometry(f'+{x}+{y}')
         
-        label = tk.Label(tw, text=self.text, justify='left',
-                        background=theme.bg_hover_light, 
-                        foreground=theme.text_primary,
-                        relief='flat', borderwidth=1,
-                        font=(theme.font_family[0], theme.font_size_small),
-                        padding=theme.spacing_md)
-        label.pack()
+        # Tkinter Label não suporta a opção 'padding'; usar 'padx/pady'
+        label = tk.Label(
+            tw,
+            text=self.text,
+            justify='left',
+            background=theme.bg_hover_light,
+            foreground=theme.text_primary,
+            relief='flat',
+            borderwidth=1,
+            font=(theme.font_family[0], theme.font_size_small),
+        )
+        label.pack(padx=theme.spacing_md, pady=theme.spacing_md)
     
     def hide_tooltip(self, event=None):
         """Esconde tooltip"""

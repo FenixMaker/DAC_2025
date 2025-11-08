@@ -43,8 +43,9 @@ class ImportWindow:
         # Criar janela
         self.window = tk.Toplevel(parent)
         self.window.title("Importação de Dados - DAC System")
-        self.window.geometry("900x700")
-        self.window.resizable(True, True)
+        # Tamanho compacto e adequado
+        self.window.geometry("920x620")
+        self.window.resizable(False, False)
         self.window.protocol("WM_DELETE_WINDOW", self.on_closing)
         
         # Aplicar tema escuro moderno
@@ -63,6 +64,8 @@ class ImportWindow:
         
         # Criar interface
         self.create_widgets()
+        # Ajustar layout em resize (somente wrap de treeview/log pela rolagem)
+        self.window.bind('<Configure>', lambda e: None)
         self.setup_keyboard_shortcuts()
         
     def setup_keyboard_shortcuts(self):
@@ -88,8 +91,8 @@ class ImportWindow:
     def center_window(self):
         """Centralizar janela na tela"""
         self.window.update_idletasks()
-        width = 900
-        height = 700
+        width = self.window.winfo_width()
+        height = self.window.winfo_height()
         x = (self.window.winfo_screenwidth() // 2) - (width // 2)
         y = (self.window.winfo_screenheight() // 2) - (height // 2)
         self.window.geometry(f"{width}x{height}+{x}+{y}")
@@ -168,104 +171,102 @@ class ImportWindow:
     
     def create_widgets(self):
         """Criar widgets da interface aprimorada com tema escuro"""
-        # Frame principal com tema escuro
+        # Frame principal com tema escuro (sem scroll, tamanho fixo mostra tudo)
         main_frame = ttk.Frame(self.window, padding="20", style='Dark.TFrame')
-        main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-        
+        main_frame.pack(fill='both', expand=True)
+
         # Configurar grid
-        self.window.columnconfigure(0, weight=1)
-        self.window.rowconfigure(0, weight=1)
         main_frame.columnconfigure(0, weight=1)
         main_frame.rowconfigure(3, weight=1)
-        
+
         # Título e status com Material Symbols
         header_frame = ttk.Frame(main_frame, style='Dark.TFrame')
         header_frame.grid(row=0, column=0, sticky=(tk.W, tk.E), pady=(0, 20))
         header_frame.columnconfigure(1, weight=1)
-        
+
         import_icon = get_icon('import')
-        title_label = ttk.Label(header_frame, 
-                               text=f"{import_icon} Importação de Dados - DAC System", 
-                               style='Dark.Title.TLabel')
+        title_label = ttk.Label(header_frame,
+                                text=f"{import_icon} Importação de Dados - DAC System",
+                                style='Dark.Title.TLabel')
         title_label.grid(row=0, column=0, sticky=tk.W)
-        
+
         # Status com cor personalizada
-        self.status_label = tk.Label(header_frame, 
-                                    textvariable=self.status_var, 
-                                    font=('Segoe UI', 10),
-                                    bg='#0D1117',
-                                    fg='#34D399')  # Verde para status
+        self.status_label = tk.Label(header_frame,
+                                     textvariable=self.status_var,
+                                     font=('Segoe UI', 10),
+                                     bg='#0D1117',
+                                     fg='#34D399')  # Verde para status
         self.status_label.grid(row=0, column=1, sticky=tk.E)
-        
+
         # Seleção de arquivos com tema escuro usando tk.Frame
         files_container = tk.Frame(main_frame, bg='#0D1117')
         files_container.grid(row=1, column=0, sticky=(tk.W, tk.E), pady=(0, 20), padx=20)
         files_container.columnconfigure(0, weight=1)
-        
+
         # Título da seção com Material Symbol
         folder_icon = get_icon('folder_open')
-        files_title = tk.Label(files_container, 
-                              text=f"{folder_icon} Seleção de Arquivos",
-                              font=('Segoe UI', 12, 'bold'),
-                              bg='#0D1117',
-                              fg='#F0F6FC')
+        files_title = tk.Label(files_container,
+                               text=f"{folder_icon} Seleção de Arquivos",
+                               font=('Segoe UI', 12, 'bold'),
+                               bg='#0D1117',
+                               fg='#F0F6FC')
         files_title.grid(row=0, column=0, sticky=tk.W, pady=(0, 15))
-        
+
         # Frame interno para os controles
         files_frame = tk.Frame(files_container, bg='#21262D', relief='flat', bd=1)
         files_frame.grid(row=1, column=0, sticky=(tk.W, tk.E), padx=0, pady=0)
         files_frame.columnconfigure(1, weight=1)
-        
+
         # Botões de seleção com Material Symbols
         buttons_row1 = tk.Frame(files_frame, bg='#21262D')
-        buttons_row1.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E), 
-                         pady=(15, 15), padx=20)
-        
+        buttons_row1.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E),
+                          pady=(15, 15), padx=20)
+
         # Usar tk.Button com Material Symbols
         file_icon = get_icon('file')
-        btn_csv = tk.Button(buttons_row1, text=f"{file_icon} CSV (Ctrl+O)", 
-                           command=self.select_csv_files,
-                           bg='#238CF5', fg='white',
-                           font=('Segoe UI', 10, 'bold'),
-                           relief='flat', bd=0, padx=15, pady=8)
+        btn_csv = tk.Button(buttons_row1, text=f"{file_icon} CSV (Ctrl+O)",
+                            command=self.select_csv_files,
+                            bg='#238CF5', fg='white',
+                            font=('Segoe UI', 10, 'bold'),
+                            relief='flat', bd=0, padx=15, pady=8)
         btn_csv.grid(row=0, column=0, padx=(0, 10))
-        
+
         table_icon = get_icon('table')
-        btn_excel = tk.Button(buttons_row1, text=f"{table_icon} Excel (Ctrl+E)", 
-                             command=self.select_excel_files,
-                             bg='#238CF5', fg='white',
-                             font=('Segoe UI', 10, 'bold'),
-                             relief='flat', bd=0, padx=15, pady=8)
+        btn_excel = tk.Button(buttons_row1, text=f"{table_icon} Excel (Ctrl+E)",
+                              command=self.select_excel_files,
+                              bg='#238CF5', fg='white',
+                              font=('Segoe UI', 10, 'bold'),
+                              relief='flat', bd=0, padx=15, pady=8)
         btn_excel.grid(row=0, column=1, padx=(0, 10))
-        
+
         delete_icon = get_icon('delete')
-        btn_clear = tk.Button(buttons_row1, text=f"{delete_icon} Limpar (Del)", 
-                             command=self.clear_selection,
-                             bg='#238CF5', fg='white',
-                             font=('Segoe UI', 10, 'bold'),
-                             relief='flat', bd=0, padx=15, pady=8)
+        btn_clear = tk.Button(buttons_row1, text=f"{delete_icon} Limpar (Del)",
+                              command=self.clear_selection,
+                              bg='#238CF5', fg='white',
+                              font=('Segoe UI', 10, 'bold'),
+                              relief='flat', bd=0, padx=15, pady=8)
         btn_clear.grid(row=0, column=2, padx=(0, 10))
-        
+
         refresh_icon = get_icon('refresh')
-        btn_refresh = tk.Button(buttons_row1, text=f"{refresh_icon} Atualizar (F5)", 
-                               command=self.refresh_file_list,
-                               bg='#238CF5', fg='white',
-                               font=('Segoe UI', 10, 'bold'),
-                               relief='flat', bd=0, padx=15, pady=8)
+        btn_refresh = tk.Button(buttons_row1, text=f"{refresh_icon} Atualizar (F5)",
+                                command=self.refresh_file_list,
+                                bg='#238CF5', fg='white',
+                                font=('Segoe UI', 10, 'bold'),
+                                relief='flat', bd=0, padx=15, pady=8)
         btn_refresh.grid(row=0, column=3)
-        
+
         # Lista de arquivos com tema escuro
         list_frame = tk.Frame(files_frame, bg='#21262D')
-        list_frame.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), 
-                       pady=(0, 15), padx=20)
+        list_frame.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S),
+                        pady=(0, 15), padx=20)
         list_frame.columnconfigure(0, weight=1)
         list_frame.rowconfigure(0, weight=1)
-        
+
         # Treeview com tema escuro
         columns = ('arquivo', 'tipo', 'tamanho', 'status')
-        self.files_tree = ttk.Treeview(list_frame, columns=columns, show='headings', 
-                                      height=8)
-        
+        self.files_tree = ttk.Treeview(list_frame, columns=columns, show='headings',
+                                       height=8)
+
         # Configurar colunas da tabela com Material Symbols
         file_col_icon = get_icon('description')
         self.files_tree.heading('arquivo', text=f'{file_col_icon} Arquivo')
@@ -275,61 +276,61 @@ class ImportWindow:
         self.files_tree.heading('tamanho', text=f'{size_icon} Tamanho')
         status_icon = get_icon('check_circle')
         self.files_tree.heading('status', text=f'{status_icon} Status')
-        
+
         self.files_tree.column('arquivo', width=300)
         self.files_tree.column('tipo', width=80)
         self.files_tree.column('tamanho', width=100)
         self.files_tree.column('status', width=120)
-        
+
         self.files_tree.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-        
+
         # Scrollbars com tema escuro
-        tree_v_scrollbar = ttk.Scrollbar(list_frame, orient="vertical", 
-                                        command=self.files_tree.yview)
+        tree_v_scrollbar = ttk.Scrollbar(list_frame, orient="vertical",
+                                         command=self.files_tree.yview)
         tree_v_scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
         self.files_tree.config(yscrollcommand=tree_v_scrollbar.set)
-        
-        tree_h_scrollbar = ttk.Scrollbar(list_frame, orient="horizontal", 
-                                        command=self.files_tree.xview)
+
+        tree_h_scrollbar = ttk.Scrollbar(list_frame, orient="horizontal",
+                                         command=self.files_tree.xview)
         tree_h_scrollbar.grid(row=1, column=0, sticky=(tk.W, tk.E))
         self.files_tree.config(xscrollcommand=tree_h_scrollbar.set)
-        
+
         # Informações de seleção com tema escuro
-        info_label = tk.Label(files_frame, 
-                             text="📁 Arquivos suportados: CSV, Excel (.xlsx, .xls), PDF | 📏 Tamanho máximo: 100MB",
-                             font=('Segoe UI', 10),
-                             bg='#21262D',
-                             fg='#8B949E')
+        info_label = tk.Label(files_frame,
+                              text="📁 Arquivos suportados: CSV, Excel (.xlsx, .xls), PDF | 📏 Tamanho máximo: 100MB",
+                              font=('Segoe UI', 10),
+                              bg='#21262D',
+                              fg='#8B949E')
         info_label.grid(row=2, column=0, columnspan=2, sticky=tk.W, padx=20, pady=(0, 15))
-        
+
         # Progresso e estatísticas com tema escuro
         progress_container = tk.Frame(main_frame, bg='#0D1117')
         progress_container.grid(row=2, column=0, sticky=(tk.W, tk.E), pady=(0, 20), padx=20)
         progress_container.columnconfigure(0, weight=1)
-        
+
         # Título da seção de progresso
         progress_title = tk.Label(progress_container,
-                                 text="⏱️ Progresso da Importação",
-                                 font=('Segoe UI', 12, 'bold'),
-                                 bg='#0D1117',
-                                 fg='#F0F6FC')
+                                  text="⏱️ Progresso da Importação",
+                                  font=('Segoe UI', 12, 'bold'),
+                                  bg='#0D1117',
+                                  fg='#F0F6FC')
         progress_title.grid(row=0, column=0, sticky=tk.W, pady=(0, 15))
-        
+
         # Frame do progresso
         progress_frame = tk.Frame(progress_container, bg='#21262D', relief='flat', bd=1)
         progress_frame.grid(row=1, column=0, sticky=(tk.W, tk.E), padx=0, pady=0)
         progress_frame.columnconfigure(0, weight=1)
-        
+
         # Barra de progresso com tema escuro
         self.progress_var = tk.DoubleVar()
-        self.progress_bar = ttk.Progressbar(progress_frame, variable=self.progress_var, 
-                                          maximum=100, length=500)
+        self.progress_bar = ttk.Progressbar(progress_frame, variable=self.progress_var,
+                                            maximum=100, length=500)
         self.progress_bar.grid(row=0, column=0, sticky=(tk.W, tk.E), pady=(15, 15), padx=20)
-        
+
         # Estatísticas em tempo real com tema escuro
         stats_frame = tk.Frame(progress_frame, bg='#21262D')
         stats_frame.grid(row=1, column=0, sticky=(tk.W, tk.E), padx=20, pady=(0, 15))
-        
+
         self.stats_labels = {}
         stats_info = [
             ('processed', '📊 Processados: 0/0'),
@@ -338,84 +339,84 @@ class ImportWindow:
             ('records', '📋 Registros: 0'),
             ('time', '⏱️ Tempo: 00:00')
         ]
-        
+
         for i, (key, text) in enumerate(stats_info):
-            label = tk.Label(stats_frame, text=text, 
-                           font=('Segoe UI', 10),
-                           bg='#21262D',
-                           fg='#F0F6FC')
+            label = tk.Label(stats_frame, text=text,
+                             font=('Segoe UI', 10),
+                             bg='#21262D',
+                             fg='#F0F6FC')
             label.grid(row=0, column=i, padx=(0, 25), sticky=tk.W)
             self.stats_labels[key] = label
-        
+
         # Log de mensagens com tema escuro
         log_container = tk.Frame(main_frame, bg='#0D1117')
         log_container.grid(row=3, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), pady=(0, 20), padx=20)
         log_container.columnconfigure(0, weight=1)
         log_container.rowconfigure(1, weight=1)
-        
+
         # Título da seção de log
         log_title = tk.Label(log_container,
-                            text="📝 Log de Importação",
-                            font=('Segoe UI', 12, 'bold'),
-                            bg='#0D1117',
-                            fg='#F0F6FC')
+                             text="📝 Log de Importação",
+                             font=('Segoe UI', 12, 'bold'),
+                             bg='#0D1117',
+                             fg='#F0F6FC')
         log_title.grid(row=0, column=0, sticky=tk.W, pady=(0, 15))
-        
+
         # Frame do log
         log_frame = tk.Frame(log_container, bg='#21262D', relief='flat', bd=1)
         log_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=0, pady=0)
         log_frame.columnconfigure(0, weight=1)
         log_frame.rowconfigure(0, weight=1)
-        
+
         # Text widget para log com tema escuro
-        self.log_text = tk.Text(log_frame, height=12, wrap=tk.WORD, 
-                               font=('JetBrains Mono', 9),
-                               bg='#21262D', fg='#F0F6FC', 
-                               insertbackground='#F0F6FC',
-                               selectbackground='#30363D')
+        self.log_text = tk.Text(log_frame, height=12, wrap=tk.WORD,
+                                font=('JetBrains Mono', 9),
+                                bg='#21262D', fg='#F0F6FC',
+                                insertbackground='#F0F6FC',
+                                selectbackground='#30363D')
         self.log_text.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=15, pady=15)
-        
+
         # Configurar tags para cores no tema escuro
         self.log_text.tag_config('success', foreground='#34D399')  # Verde
         self.log_text.tag_config('error', foreground='#F87171')    # Vermelho
         self.log_text.tag_config('warning', foreground='#FB923C')  # Laranja
         self.log_text.tag_config('info', foreground='#238CF5')     # Azul
-        
+
         # Scrollbar para log
         log_scrollbar = ttk.Scrollbar(log_frame, orient="vertical", command=self.log_text.yview)
         log_scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S), padx=(0, 15), pady=15)
         self.log_text.config(yscrollcommand=log_scrollbar.set)
-        
+
         # Botões de ação com tema escuro
         buttons_frame = tk.Frame(main_frame, bg='#0D1117')
         buttons_frame.grid(row=4, column=0, pady=(15, 0), padx=20)
-        
+
         self.import_button = tk.Button(buttons_frame, text="📥 Importar Arquivos (Ctrl+I)",
-                                      command=self.start_import, state='disabled',
-                                      bg='#238CF5', fg='white',
-                                      font=('Segoe UI', 11, 'bold'),
-                                      relief='flat', bd=0, padx=20, pady=10)
+                                       command=self.start_import, state='disabled',
+                                       bg='#238CF5', fg='white',
+                                       font=('Segoe UI', 11, 'bold'),
+                                       relief='flat', bd=0, padx=20, pady=10)
         self.import_button.grid(row=0, column=0, padx=(0, 10))
-        
+
         self.import_pdf_button = tk.Button(buttons_frame, text="📄 Processar PDFs (Ctrl+P)",
-                                          command=self.start_pdf_import,
-                                          bg='#238CF5', fg='white',
-                                          font=('Segoe UI', 11, 'bold'),
-                                          relief='flat', bd=0, padx=20, pady=10)
+                                           command=self.start_pdf_import,
+                                           bg='#238CF5', fg='white',
+                                           font=('Segoe UI', 11, 'bold'),
+                                           relief='flat', bd=0, padx=20, pady=10)
         self.import_pdf_button.grid(row=0, column=1, padx=(0, 10))
-        
+
         self.cancel_button = tk.Button(buttons_frame, text="❌ Cancelar (Ctrl+C)",
-                                      command=self.cancel_import, state='disabled',
-                                      bg='#F87171', fg='white',
-                                      font=('Segoe UI', 11, 'bold'),
-                                      relief='flat', bd=0, padx=20, pady=10)
+                                       command=self.cancel_import, state='disabled',
+                                       bg='#F87171', fg='white',
+                                       font=('Segoe UI', 11, 'bold'),
+                                       relief='flat', bd=0, padx=20, pady=10)
         self.cancel_button.grid(row=0, column=2, padx=(0, 10))
-        
+
         close_button = tk.Button(buttons_frame, text="🚪 Fechar (Esc)",
-                                command=self.on_closing,
-                                bg='#8B949E', fg='white',
-                                font=('Segoe UI', 11, 'bold'),
-                                relief='flat', bd=0, padx=20, pady=10)
+                                 command=self.on_closing,
+                                 bg='#8B949E', fg='white',
+                                 font=('Segoe UI', 11, 'bold'),
+                                 relief='flat', bd=0, padx=20, pady=10)
         close_button.grid(row=0, column=3)
     
     def select_csv_files(self):

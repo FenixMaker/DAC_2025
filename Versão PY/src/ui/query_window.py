@@ -11,6 +11,7 @@ from typing import Dict, List, Optional
 from ..utils.logger import get_logger
 from ..database.models import Region, Household, Individual, DeviceUsage, InternetUsage
 from .icons import get_icon, get_icon_color
+from .modern_components import ModernScrollableFrame
 
 class QueryWindow:
     """Janela para consulta e filtragem de dados"""
@@ -32,8 +33,9 @@ class QueryWindow:
         self.window = tk.Toplevel(master)
         search_icon = get_icon('search')
         self.window.title(f"{search_icon} Consulta e Filtragem de Dados - DAC")
-        self.window.geometry("1200x800")
-        self.window.resizable(True, True)
+        # Tamanho compacto e adequado
+        self.window.geometry("1050x680")
+        self.window.resizable(False, False)
         
         # Aplicar tema escuro
         self.window.configure(bg='#0D1117')
@@ -43,6 +45,7 @@ class QueryWindow:
         self.window.protocol("WM_DELETE_WINDOW", self.on_closing)
         
         # Centralizar janela
+        # Centralizar janela após ajustar geometry
         self.center_window()
         
         # Criar widgets
@@ -530,9 +533,11 @@ class QueryWindow:
     def center_window(self):
         """Centraliza a janela na tela"""
         self.window.update_idletasks()
-        x = (self.window.winfo_screenwidth() // 2) - (1200 // 2)
-        y = (self.window.winfo_screenheight() // 2) - (800 // 2)
-        self.window.geometry(f"1200x800+{x}+{y}")
+        w = 1050
+        h = 680
+        x = (self.window.winfo_screenwidth() // 2) - (w // 2)
+        y = (self.window.winfo_screenheight() // 2) - (h // 2)
+        self.window.geometry(f"{w}x{h}+{x}+{y}")
     
     def setup_keyboard_shortcuts(self):
         """Configura atalhos de teclado"""
@@ -565,14 +570,12 @@ class QueryWindow:
     
     def create_widgets(self):
         """Cria os widgets da interface com tema escuro"""
-        # Frame principal com tema escuro
+        # Frame principal com tema escuro (tamanho fixo, sem scroll)
         main_frame = tk.Frame(self.window, bg='#0D1117')
-        main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=20, pady=20)
+        main_frame.pack(fill='both', expand=True, padx=20, pady=20)
         
         # Configurar grid
-        self.window.columnconfigure(0, weight=1)
-        self.window.rowconfigure(0, weight=1)
-        main_frame.columnconfigure(1, weight=1)
+        main_frame.columnconfigure(0, weight=1)
         main_frame.rowconfigure(1, weight=1)
         
         # Título com tema escuro
@@ -581,23 +584,37 @@ class QueryWindow:
                               font=('Segoe UI', 16, 'bold'),
                               bg='#0D1117',
                               fg='#F0F6FC')
-        title_label.grid(row=0, column=0, columnspan=2, pady=(0, 20))
+        title_label.grid(row=0, column=0, pady=(0, 20), sticky='w')
         
+        # Área de conteúdo lado a lado (filtros e resultados)
+        content_frame = tk.Frame(main_frame, bg='#0D1117')
+        content_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        content_frame.columnconfigure(0, weight=1)
+        content_frame.columnconfigure(1, weight=2)
+        content_frame.rowconfigure(0, weight=1)
+
         # Frame de filtros (lado esquerdo)
-        self.create_filters_frame(main_frame)
+        self.filters_root = content_frame
+        self.create_filters_frame(content_frame)
         
         # Frame de resultados (lado direito)
-        self.create_results_frame(main_frame)
+        self.results_root = content_frame
+        self.create_results_frame(content_frame)
         
         # Frame de botões (parte inferior)
         self.create_buttons_frame(main_frame)
+
+        # Guardar referências para regrid dinâmico
+        self._content_frame = content_frame
     
     def create_filters_frame(self, parent):
         """Cria o frame de filtros com tema escuro"""
         # Container principal dos filtros
         filters_container = tk.Frame(parent, bg='#0D1117')
-        filters_container.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 15))
+        # Posição padrão: col=0 (lado esquerdo)
+        filters_container.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 15))
         filters_container.columnconfigure(0, weight=1)
+        self.filters_container = filters_container
         
         # Título da seção de filtros
         filters_title = tk.Label(filters_container,
@@ -612,53 +629,53 @@ class QueryWindow:
         filters_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=0, pady=0)
         filters_frame.columnconfigure(0, weight=1)
         
-        # Padding interno
+        # Padding interno reduzido
         filters_content = tk.Frame(filters_frame, bg='#21262D')
-        filters_content.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=20, pady=20)
+        filters_content.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=15, pady=15)
         filters_content.columnconfigure(0, weight=1)
         
         # Filtro por região
         region_label = tk.Label(filters_content, text="🌍 Região:", 
                                font=('Segoe UI', 10, 'bold'),
                                bg='#21262D', fg='#F0F6FC')
-        region_label.grid(row=0, column=0, sticky=tk.W, pady=(0, 5))
+        region_label.grid(row=0, column=0, sticky=tk.W, pady=(0, 3))
         
         self.region_var = tk.StringVar()
         self.region_combo = ttk.Combobox(filters_content, textvariable=self.region_var, 
                                         state="readonly", style='Query.TCombobox')
-        self.region_combo.grid(row=1, column=0, sticky=(tk.W, tk.E), pady=(0, 15))
+        self.region_combo.grid(row=1, column=0, sticky=(tk.W, tk.E), pady=(0, 10))
         
         # Filtro por faixa etária
         age_label = tk.Label(filters_content, text="📅 Faixa Etária:", 
                             font=('Segoe UI', 10, 'bold'),
                             bg='#21262D', fg='#F0F6FC')
-        age_label.grid(row=2, column=0, sticky=tk.W, pady=(0, 5))
+        age_label.grid(row=2, column=0, sticky=tk.W, pady=(0, 3))
         
         age_frame = tk.Frame(filters_content, bg='#21262D')
-        age_frame.grid(row=3, column=0, sticky=(tk.W, tk.E), pady=(0, 15))
+        age_frame.grid(row=3, column=0, sticky=(tk.W, tk.E), pady=(0, 10))
         age_frame.columnconfigure(1, weight=1)
         
-        de_label = tk.Label(age_frame, text="De:", bg='#21262D', fg='#8B949E')
+        de_label = tk.Label(age_frame, text="De:", bg='#21262D', fg='#8B949E', font=('Segoe UI', 9))
         de_label.grid(row=0, column=0, padx=(0, 5))
         
         self.age_min_var = tk.StringVar()
         age_min_entry = ttk.Entry(age_frame, textvariable=self.age_min_var, 
-                                 width=10, style='Query.TEntry')
-        age_min_entry.grid(row=0, column=1, padx=(0, 10))
+                                 width=8, style='Query.TEntry')
+        age_min_entry.grid(row=0, column=1, padx=(0, 8))
         
-        ate_label = tk.Label(age_frame, text="Até:", bg='#21262D', fg='#8B949E')
+        ate_label = tk.Label(age_frame, text="Até:", bg='#21262D', fg='#8B949E', font=('Segoe UI', 9))
         ate_label.grid(row=0, column=2, padx=(0, 5))
         
         self.age_max_var = tk.StringVar()
         age_max_entry = ttk.Entry(age_frame, textvariable=self.age_max_var, 
-                                 width=10, style='Query.TEntry')
+                                 width=8, style='Query.TEntry')
         age_max_entry.grid(row=0, column=3)
         
         # Filtro por gênero
         gender_label = tk.Label(filters_content, text="👤 Gênero:", 
                                font=('Segoe UI', 10, 'bold'),
                                bg='#21262D', fg='#F0F6FC')
-        gender_label.grid(row=4, column=0, sticky=tk.W, pady=(0, 5))
+        gender_label.grid(row=4, column=0, sticky=tk.W, pady=(0, 3))
         self.gender_var = tk.StringVar()
         self.gender_combo = ttk.Combobox(filters_content, textvariable=self.gender_var, 
                                         state="readonly", style='Query.TCombobox')
@@ -670,7 +687,7 @@ class QueryWindow:
         income_label = tk.Label(filters_content, text="💰 Faixa de Renda:", 
                                font=('Segoe UI', 10, 'bold'),
                                bg='#21262D', fg='#F0F6FC')
-        income_label.grid(row=6, column=0, sticky=tk.W, pady=(0, 5))
+        income_label.grid(row=6, column=0, sticky=tk.W, pady=(0, 3))
         self.income_var = tk.StringVar()
         self.income_combo = ttk.Combobox(filters_content, textvariable=self.income_var, 
                                         state="readonly", style='Query.TCombobox')
@@ -680,7 +697,7 @@ class QueryWindow:
         disability_label = tk.Label(filters_content, text="♿ Pessoa com Deficiência:", 
                                    font=('Segoe UI', 10, 'bold'),
                                    bg='#21262D', fg='#F0F6FC')
-        disability_label.grid(row=8, column=0, sticky=tk.W, pady=(0, 5))
+        disability_label.grid(row=8, column=0, sticky=tk.W, pady=(0, 3))
         self.disability_var = tk.StringVar()
         self.disability_combo = ttk.Combobox(filters_content, textvariable=self.disability_var, 
                                            state="readonly", style='Query.TCombobox')
@@ -692,39 +709,41 @@ class QueryWindow:
         internet_label = tk.Label(filters_content, text="🌐 Acesso à Internet:", 
                                  font=('Segoe UI', 10, 'bold'),
                                  bg='#21262D', fg='#F0F6FC')
-        internet_label.grid(row=10, column=0, sticky=tk.W, pady=(0, 5))
+        internet_label.grid(row=10, column=0, sticky=tk.W, pady=(0, 3))
         self.internet_var = tk.StringVar()
         self.internet_combo = ttk.Combobox(filters_content, textvariable=self.internet_var, 
                                          state="readonly", style='Query.TCombobox')
         self.internet_combo['values'] = ('Todos', 'Sim', 'Não')
         self.internet_combo.set('Todos')
-        self.internet_combo.grid(row=11, column=0, sticky=(tk.W, tk.E), pady=(0, 15))
+        self.internet_combo.grid(row=11, column=0, sticky=(tk.W, tk.E), pady=(0, 10))
         
         # Botões de filtro
         filter_buttons_frame = tk.Frame(filters_content, bg='#21262D')
-        filter_buttons_frame.grid(row=12, column=0, sticky=(tk.W, tk.E))
+        filter_buttons_frame.grid(row=12, column=0, sticky=(tk.W, tk.E), pady=(0, 0))
         filter_buttons_frame.columnconfigure(0, weight=1)
         filter_buttons_frame.columnconfigure(1, weight=1)
         
         apply_btn = tk.Button(filter_buttons_frame, text="Aplicar Filtros", 
                              command=self.apply_filters,
                              bg='#238CF5', fg='white', font=('Segoe UI', 9, 'bold'),
-                             relief='flat', padx=15, pady=8)
+                             relief='flat', padx=12, pady=6)
         apply_btn.grid(row=0, column=0, padx=(0, 5), sticky=(tk.W, tk.E))
         
         clear_btn = tk.Button(filter_buttons_frame, text="Limpar Filtros", 
                              command=self.clear_filters,
                              bg='#8B949E', fg='white', font=('Segoe UI', 9, 'bold'),
-                             relief='flat', padx=15, pady=8)
+                             relief='flat', padx=12, pady=6)
         clear_btn.grid(row=0, column=1, padx=(5, 0), sticky=(tk.W, tk.E))
     
     def create_results_frame(self, parent):
         """Cria o frame de resultados"""
         # Frame principal dos resultados
         results_frame = tk.Frame(parent, bg='#0D1117')
-        results_frame.grid(row=1, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=10, pady=10)
+        # Posição padrão: col=1 (lado direito)
+        results_frame.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=10, pady=10)
         results_frame.columnconfigure(0, weight=1)
         results_frame.rowconfigure(1, weight=1)
+        self.results_frame = results_frame
         
         # Título dos resultados
         title_frame = tk.Frame(results_frame, bg='#21262D', height=40)
@@ -758,11 +777,11 @@ class QueryWindow:
         for col in columns:
             self.results_tree.heading(col, text=col)
             if col == 'ID':
-                self.results_tree.column(col, width=50, minwidth=50)
+                self.results_tree.column(col, width=50, minwidth=50, stretch=True)
             elif col in ['Idade', 'Gênero']:
-                self.results_tree.column(col, width=80, minwidth=80)
+                self.results_tree.column(col, width=80, minwidth=80, stretch=True)
             else:
-                self.results_tree.column(col, width=120, minwidth=100)
+                self.results_tree.column(col, width=120, minwidth=100, stretch=True)
         
         # Scrollbars com tema escuro
         v_scrollbar = ttk.Scrollbar(tree_frame, orient=tk.VERTICAL, 
@@ -780,6 +799,7 @@ class QueryWindow:
         """Cria o frame de botões com controles de paginação"""
         buttons_frame = ttk.Frame(parent)
         buttons_frame.grid(row=2, column=0, columnspan=2, pady=(15, 0))
+        self.buttons_frame = buttons_frame
         
         # Frame de paginação
         pagination_frame = ttk.Frame(buttons_frame)
@@ -885,3 +905,41 @@ class QueryWindow:
                 self.apply_filters(new_page)
         except ValueError:
             self.records_per_page_var.set(str(self.records_per_page))
+
+    def _on_resize(self, event=None):
+        """Reorganiza layout quando largura fica estreita para evitar corte."""
+        try:
+            width = self.window.winfo_width()
+            threshold = 1100
+            if width < threshold and not self._stacked:
+                # Empilhar verticalmente
+                if self.results_frame and self.filters_container:
+                    self.results_frame.grid_forget()
+                    self.filters_container.grid_forget()
+                    # Filtros primeiro
+                    self.filters_container.grid(row=0, column=0, sticky='nwe', padx=(0, 0), pady=(0, 10))
+                    # Resultados abaixo
+                    self.results_frame.grid(row=1, column=0, sticky='nsew', padx=0, pady=(0, 10))
+                    # Botões
+                    self.buttons_frame.grid_forget()
+                    self.buttons_frame.grid(row=2, column=0, pady=(5, 0))
+                    # Ajustar expansão
+                    self._content_frame.columnconfigure(0, weight=1)
+                    self._content_frame.columnconfigure(1, weight=0)
+                    self._content_frame.rowconfigure(0, weight=0)
+                    self._content_frame.rowconfigure(1, weight=1)
+                    self._stacked = True
+            elif width >= threshold and self._stacked:
+                # Restaurar layout lado a lado
+                self.filters_container.grid_forget()
+                self.results_frame.grid_forget()
+                self.buttons_frame.grid_forget()
+                self.filters_container.grid(row=0, column=0, sticky='nsew', padx=(0, 15))
+                self.results_frame.grid(row=0, column=1, sticky='nsew', padx=10, pady=10)
+                self.buttons_frame.grid(row=2, column=0, columnspan=2, pady=(15, 0))
+                self._content_frame.columnconfigure(0, weight=1)
+                self._content_frame.columnconfigure(1, weight=2)
+                self._stacked = False
+            # Ajuste dinâmico do wrap de títulos/labels se desejado (futuro)
+        except Exception as e:
+            self.logger.error(f"Erro ao ajustar layout responsivo: {e}")

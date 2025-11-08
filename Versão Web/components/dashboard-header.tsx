@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { BarChart3, Menu, Activity } from "lucide-react"
+import { Logo } from "@/components/logo"
+import { Menu, Activity } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export function DashboardHeader() {
@@ -8,15 +9,8 @@ export function DashboardHeader() {
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/20 transition-all group-hover:shadow-xl group-hover:shadow-primary/30 group-hover:scale-105">
-                <BarChart3 className="h-5 w-5 text-primary-foreground" />
-                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-bold tracking-tight">DAC</span>
-                <span className="text-xs text-muted-foreground uppercase tracking-wider">Digital Analysis</span>
-              </div>
+            <Link href="/" className="flex items-center group">
+              <Logo variant="simplified" size={64} priority className="shrink-0" />
             </Link>
 
             <nav className="hidden md:flex items-center gap-1">

@@ -29,7 +29,10 @@ class MaterialIconManager:
     def _check_font_availability(self):
         """Verifica se as fontes de ícones estão disponíveis"""
         try:
-            available_fonts = tkfont.families()
+            # Tentar obter fontes disponíveis após criar uma janela root temporária
+            root = tk.Tk()
+            root.withdraw()  # Esconder janela temporária
+            available_fonts = tkfont.families(root)
             
             # Tentar usar Material Symbols se disponível
             material_fonts = ['Material Symbols Outlined', 'Material Symbols Rounded', 'Material Icons']
@@ -37,6 +40,7 @@ class MaterialIconManager:
                 if font_name in available_fonts:
                     self.font_family = font_name
                     print(f"✓ Usando fonte de ícones: {font_name}")
+                    root.destroy()
                     return
             
             # Fallback para fontes do sistema
@@ -46,9 +50,11 @@ class MaterialIconManager:
                 self.font_family = 'Segoe MDL2 Assets'
             else:
                 self.font_family = self.emoji_fallback
+            
+            root.destroy()
                 
         except Exception as e:
-            print(f"⚠ Aviso: Erro ao verificar fontes: {e}")
+            print(f"⚠ Aviso: Usando fonte padrão de emojis (erro ao verificar fontes)")
             self.font_family = self.emoji_fallback
     
     def load_material_icons(self):

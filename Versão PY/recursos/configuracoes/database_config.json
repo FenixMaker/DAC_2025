@@ -1,47 +1,13 @@
 {
-  "database": {
-    "host": "127.0.0.1",
-    "port": 5432,
-    "database": "sistema_dac",
-    "username": "postgres",
-    "password": "123456",
-    "charset": "UTF8",
-    "collation": "pt_BR.UTF-8",
-    "timezone": "America/Sao_Paulo"
-  },
-  "schema": {
-    "tables": {
-      "regions": {
-        "name_pt": "regioes",
-        "description": "Tabela de regiões brasileiras"
-      },
-      "households": {
-        "name_pt": "domicilios", 
-        "description": "Dados dos domicílios"
-      },
-      "individuals": {
-        "name_pt": "individuos",
-        "description": "Dados individuais dos moradores"
-      },
-      "device_usage": {
-        "name_pt": "uso_dispositivos",
-        "description": "Dados de uso de dispositivos"
-      },
-      "internet_usage": {
-        "name_pt": "uso_internet",
-        "description": "Dados de uso da internet"
-      }
-    },
-    "constraints": {
-      "enable_foreign_keys": true,
-      "cascade_deletes": false
-    }
-  },
-  "locale": {
-    "language": "pt_BR",
-    "currency": "BRL",
-    "date_format": "dd/mm/yyyy",
-    "decimal_separator": ",",
-    "thousands_separator": "."
-  }
+  "type": "PostgreSQL",
+  "host": "localhost",
+  "port": 5432,
+  "database": "{'host': '127.0.0.1', 'port': 5432, 'database': 'sistema_dac', 'username': 'postgres', 'password': '123456', 'charset': 'UTF8', 'collation': 'pt_BR.UTF-8', 'timezone': 'America/Sao_Paulo'}",
+  "user": "postgres",
+  "password": "",
+  "sslmode": "prefer",
+  "pool_size": 20,
+  "timeout_ms": 30000,
+  "retry_count": 3,
+  "sqlite_path": "c:\\Users\\FenixPosts\\Desktop\\DAC_2025\\Banco de dados\\dac_database.db"
 }

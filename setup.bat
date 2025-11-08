@@ -111,8 +111,19 @@ echo   ETAPA 2/5: Criando Ambiente Virtual Python
 echo ========================================================================
 echo.
 
+REM Remover ambiente virtual antigo na raiz se existir (de versoes anteriores)
 if exist ".venv" (
-    echo [AVISO] Ambiente virtual ja existe
+    echo [INFO] Removendo ambiente virtual antigo da raiz...
+    rmdir /s /q .venv
+    echo [OK] Ambiente virtual antigo removido
+    echo.
+)
+
+REM Criar ambiente virtual na pasta Versao PY (onde a aplicacao espera)
+cd "Versão PY"
+
+if exist ".venv" (
+    echo [AVISO] Ambiente virtual ja existe em Versao PY
     echo         Deseja recriar? (S/N)
     set /p RECREATE="> "
     if /i "!RECREATE!"=="S" (
@@ -120,20 +131,31 @@ if exist ".venv" (
         rmdir /s /q .venv
         echo [INFO] Criando novo ambiente virtual...
         python -m venv .venv
+        if %errorLevel% == 0 (
+            echo [OK] Ambiente virtual criado com sucesso!
+        ) else (
+            echo [ERRO] Falha ao criar ambiente virtual
+            cd ..
+            pause
+            exit /b 1
+        )
     ) else (
         echo [INFO] Usando ambiente virtual existente
     )
 ) else (
-    echo [INFO] Criando ambiente virtual Python...
+    echo [INFO] Criando ambiente virtual Python em Versao PY...
     python -m venv .venv
     if %errorLevel% == 0 (
         echo [OK] Ambiente virtual criado com sucesso!
     ) else (
         echo [ERRO] Falha ao criar ambiente virtual
+        cd ..
         pause
         exit /b 1
     )
 )
+
+cd ..
 
 echo.
 timeout /t 1 >nul
@@ -147,8 +169,8 @@ echo   ETAPA 3/5: Instalando Dependencias Python
 echo ========================================================================
 echo.
 
-echo [INFO] Atualizando pip...
-.\.venv\Scripts\python.exe -m pip install --upgrade pip --quiet
+echo [INFO] Atualizando pip no ambiente virtual...
+"Versão PY\.venv\Scripts\python.exe" -m pip install --upgrade pip --quiet
 if %errorLevel% == 0 (
     echo [OK] pip atualizado
 ) else (
@@ -158,7 +180,7 @@ if %errorLevel% == 0 (
 echo.
 echo [INFO] Instalando dependencias da Versao Python Desktop...
 echo        Isso pode levar alguns minutos...
-.\.venv\Scripts\python.exe -m pip install -r "Versão PY\requirements.txt" --quiet
+"Versão PY\.venv\Scripts\python.exe" -m pip install -r "Versão PY\requirements.txt" --quiet
 if %errorLevel% == 0 (
     echo [OK] Dependencias da versao Desktop instaladas
 ) else (
@@ -169,7 +191,7 @@ if %errorLevel% == 0 (
 
 echo.
 echo [INFO] Instalando dependencias do Backend Web (FastAPI)...
-.\.venv\Scripts\python.exe -m pip install -r "Versão PY\web\backend\requirements.txt" --quiet
+"Versão PY\.venv\Scripts\python.exe" -m pip install -r "Versão PY\web\backend\requirements.txt" --quiet
 if %errorLevel% == 0 (
     echo [OK] Dependencias do Backend instaladas
 ) else (
@@ -271,9 +293,9 @@ REM Script para iniciar versao web
     echo @echo off
     echo echo Iniciando Sistema DAC - Versao Web...
     echo echo.
-    echo start "DAC Backend" /min cmd /c "cd /d "%~dp0Versão PY\web\backend" && ..\..\..\\.venv\Scripts\python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
+    echo start "DAC Backend" /min cmd /c "cd /d "%%~dp0Versão PY\web\backend" ^&^& ..\.venv\Scripts\python.exe -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     echo timeout /t 3 >nul
-    echo start "DAC Frontend" /min cmd /c "cd /d "%~dp0Versão Web" && npm run start-frontend"
+    echo start "DAC Frontend" /min cmd /c "cd /d "%%~dp0Versão Web" ^&^& npm run start-frontend"
     echo echo.
     echo echo ========================================
     echo echo   Servidores Iniciados!
@@ -292,8 +314,9 @@ REM Script para iniciar versao desktop
 (
     echo @echo off
     echo echo Iniciando Sistema DAC - Versao Desktop...
-    echo cd /d "%~dp0Versão PY"
-    echo ..\\.venv\Scripts\python.exe main.py
+    echo cd /d "%%~dp0Versão PY"
+    echo .venv\Scripts\python.exe main.py
+    echo pause
 ) > "Iniciar-Desktop.bat"
 
 REM Script para parar servidores
@@ -333,7 +356,7 @@ echo   Python Version:   !PYTHON_VERSION!
 echo   Node.js Version:  !NODE_VERSION!
 echo   NPM Version:      !NPM_VERSION!
 echo.
-echo   Ambiente Virtual: .venv\
+echo   Ambiente Virtual: Versao PY\.venv\
 echo   Dependencias Python: Instaladas
 echo   Dependencias Node.js: Instaladas
 echo.

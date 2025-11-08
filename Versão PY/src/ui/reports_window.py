@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 Janela de geração de relatórios - Sistema DAC
 Versão aprimorada com visualizações interativas e análises avançadas
@@ -30,10 +30,10 @@ class ReportsWindow:
         self.filtered_data = filtered_data
         self.logger = get_logger(__name__)
         
-        # Configurações de visualização com tema moderno
+        # Configurações de visualização com tema moderno - GRÁFICOS MENORES
         self.chart_config = {
-            'figure_size': (10, 6),
-            'dpi': 100,
+            'figure_size': (4.5, 3),  # Ainda menor para caber melhor
+            'dpi': 80,  # Reduzido ainda mais
             'style': 'seaborn-v0_8',
             'color_palette': ['#00D4FF', '#8B5CF6', '#EC4899', '#F59E0B', '#10B981']
         }
@@ -66,9 +66,15 @@ class ReportsWindow:
         
         # Criar janela com estilo moderno
         self.window = tk.Toplevel(parent)
-        self.window.title("💰 Relatórios Avançados - Sistema DAC")
-        self.window.geometry("1400x900")
-        self.window.minsize(1200, 800)
+        self.window.title("� Relatórios Avançados - Sistema DAC")
+        # Tamanho aumentado para melhor visualização
+        self.window.geometry("1350x800")
+        # Tornar redimensionável e definir um tamanho mínimo para evitar cortes
+        try:
+            self.window.minsize(1100, 700)
+        except Exception:
+            pass
+        self.window.resizable(True, True)
         self.window.configure(bg=self.colors['bg_primary'])
         self.window.transient(parent)
         self.window.grab_set()
@@ -91,6 +97,50 @@ class ReportsWindow:
         
         # Carregar dados e gerar relatórios
         self.load_data_and_generate_reports()
+
+    def _bind_resize_redraw(self, frame, redraw_fn):
+        """Associa evento de redimensionamento para redesenhar o gráfico no frame."""
+        try:
+            def _on_resize(event):
+                # Regerar gráfico ao mudar tamanho, mantendo funcionalidades
+                for widget in frame.winfo_children():
+                    widget.destroy()
+                try:
+                    redraw_fn()
+                except Exception:
+                    # Evitar quebra em resize
+                    pass
+            frame.bind("<Configure>", _on_resize)
+        except Exception:
+            pass
+
+    def _get_dynamic_figsize(self, frame, base: Tuple[float, float] = (8, 6), padding_px: int = 24) -> Tuple[float, float]:
+        """Calcula figsize (em polegadas) com base no tamanho atual do frame.
+        Aplica limites mínimos e máximos para manter legibilidade.
+        """
+        try:
+            frame.update_idletasks()
+            dpi = float(plt.rcParams.get('figure.dpi', 100))
+            width_px = max(frame.winfo_width() - padding_px, 300)
+            height_px = max(frame.winfo_height() - padding_px, 240)
+
+            width_in = width_px / dpi
+            height_in = height_px / dpi
+
+            # Limites para legibilidade
+            min_w, min_h = 5.5, 4.0
+            max_w, max_h = 16.0, 10.0
+
+            width_in = min(max(width_in, min_w), max_w)
+            height_in = min(max(height_in, min_h), max_h)
+
+            # Se tamanho ainda é muito pequeno (ex: primeira renderização), usar base
+            if width_px <= 320 or height_px <= 260:
+                return base
+
+            return (width_in, height_in)
+        except Exception:
+            return base
     
     def show(self):
         """Exibe a janela de relatórios"""
@@ -227,16 +277,16 @@ class ReportsWindow:
     def center_window(self):
         """Centraliza a janela na tela"""
         self.window.update_idletasks()
-        width = 1400
-        height = 900
+        width = 1280
+        height = 750
         x = (self.window.winfo_screenwidth() // 2) - (width // 2)
         y = (self.window.winfo_screenheight() // 2) - (height // 2)
         self.window.geometry(f"{width}x{height}+{x}+{y}")
     
     def create_widgets(self):
         """Cria os widgets da interface com design moderno"""
-        # Frame principal com estilo moderno
-        main_frame = ttk.Frame(self.window, padding="20")
+        # Frame principal com padding maior
+        main_frame = ttk.Frame(self.window, padding="25")
         main_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         
         # Configurar grid responsivo
@@ -245,43 +295,47 @@ class ReportsWindow:
         main_frame.columnconfigure(0, weight=1)
         main_frame.rowconfigure(2, weight=1)
         
-        # Cabeçalho moderno
+        # Cabeçalho moderno com mais destaque
         header_frame = ttk.Frame(main_frame)
         header_frame.grid(row=0, column=0, sticky=(tk.W, tk.E), pady=(0, 20))
         header_frame.columnconfigure(1, weight=1)
         
-        # Título com estilo moderno
-        title_label = ttk.Label(header_frame, text="💰 Relatórios Avançados - Sistema DAC", 
-                               style='Title.TLabel')
+        # Título com estilo moderno e maior
+        title_label = ttk.Label(header_frame, text="� Relatórios Avançados - Sistema DAC", 
+                               style='Title.TLabel',
+                               font=('Segoe UI', 20, 'bold'))
         title_label.grid(row=0, column=0, sticky=tk.W)
         
-        # Status dos dados com estilo moderno
-        self.status_label = ttk.Label(header_frame, text="Carregando dados...", 
-                                     style='Subtitle.TLabel')
+        # Status dos dados com estilo moderno e destaque
+        self.status_label = ttk.Label(header_frame, text="🔄 Carregando dados...", 
+                                     style='Subtitle.TLabel',
+                                     font=('Segoe UI', 11))
         self.status_label.grid(row=0, column=1, sticky=tk.E)
         
-        # Frame de controles com estilo moderno
+        # Frame de controles com padding e espaçamento maior
         controls_frame = ttk.LabelFrame(main_frame, text="🎛️ Controles de Visualização", 
-                                       padding="15")
+                                       padding="18")
         controls_frame.grid(row=1, column=0, sticky=(tk.W, tk.E), pady=(0, 20))
         controls_frame.columnconfigure(3, weight=1)
         
-        # Tipo de gráfico
-        ttk.Label(controls_frame, text="Tipo de Gráfico:").grid(row=0, column=0, padx=(0, 10))
+        # Tipo de gráfico com labels maiores
+        ttk.Label(controls_frame, text="📊 Tipo de Gráfico:", 
+                 font=('Segoe UI', 10, 'bold')).grid(row=0, column=0, padx=(0, 10))
         chart_combo = ttk.Combobox(controls_frame, textvariable=self.chart_type, 
                                   values=["bar", "pie", "line", "scatter"], 
-                                  state="readonly", width=12)
-        chart_combo.grid(row=0, column=1, padx=(0, 30))
+                                  state="readonly", width=14, font=('Segoe UI', 10))
+        chart_combo.grid(row=0, column=1, padx=(0, 35))
         chart_combo.bind('<<ComboboxSelected>>', self.on_chart_type_changed)
         
         # Formato de exportação
-        ttk.Label(controls_frame, text="Formato:").grid(row=0, column=2, padx=(0, 10))
+        ttk.Label(controls_frame, text="💾 Formato:", 
+                 font=('Segoe UI', 10, 'bold')).grid(row=0, column=2, padx=(0, 10))
         format_combo = ttk.Combobox(controls_frame, textvariable=self.export_format,
                                    values=["PDF", "Excel", "PNG", "SVG"], 
-                                   state="readonly", width=12)
-        format_combo.grid(row=0, column=3, padx=(0, 30))
+                                   state="readonly", width=14, font=('Segoe UI', 10))
+        format_combo.grid(row=0, column=3, padx=(0, 35))
         
-        # Botões de controle com estilo moderno
+        # Botões de controle maiores
         ttk.Button(controls_frame, text="🔄 Atualizar (F5)", 
                   style='Modern.TButton',
                   command=self.refresh_reports).grid(row=0, column=4, padx=(0, 15))
@@ -290,9 +344,9 @@ class ReportsWindow:
                   style='Modern.TButton',
                   command=self.show_settings).grid(row=0, column=5)
         
-        # Notebook para abas com estilo moderno
+        # Notebook para abas com tabs maiores
         self.notebook = ttk.Notebook(main_frame)
-        self.notebook.grid(row=2, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        self.notebook.grid(row=2, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), pady=(0, 15))
         
         # Criar abas
         self.create_overview_tab()
@@ -302,79 +356,106 @@ class ReportsWindow:
         self.create_regional_tab()
         self.create_analysis_tab()
         
-        # Frame de botões com estilo moderno
+        # Frame de botões com mais espaço
         buttons_frame = ttk.Frame(main_frame)
-        buttons_frame.grid(row=3, column=0, pady=(20, 0))
+        buttons_frame.grid(row=3, column=0, pady=(8, 0))
         
-        ttk.Button(buttons_frame, text="📄 Exportar PDF (Ctrl+S)", 
-                  style='Modern.TButton',
-                  command=self.export_pdf_report).grid(row=0, column=0, padx=(0, 15))
-        ttk.Button(buttons_frame, text="📊 Exportar Excel (Ctrl+E)", 
-                  style='Modern.TButton',
-                  command=self.export_excel_report).grid(row=0, column=1, padx=15)
-        ttk.Button(buttons_frame, text="💾 Salvar Configurações", 
-                  style='Modern.TButton',
-                  command=self.save_settings).grid(row=0, column=2, padx=15)
-        ttk.Button(buttons_frame, text="❌ Fechar (Esc)", 
-                  style='Modern.TButton',
-                   command=self.window.destroy).grid(row=0, column=3, padx=(15, 0))
+        # Guardar referência aos botões para controlar estado habilitado/desabilitado
+        self.export_pdf_btn = ttk.Button(
+            buttons_frame,
+            text="📄 PDF",
+            style='Modern.TButton',
+            command=self.export_pdf_report
+        )
+        self.export_pdf_btn.grid(row=0, column=0, padx=(0, 10))
+
+        self.export_excel_btn = ttk.Button(
+            buttons_frame,
+            text="📊 Excel",
+            style='Modern.TButton',
+            command=self.export_excel_report
+        )
+        self.export_excel_btn.grid(row=0, column=1, padx=(0, 10))
+
+        # Inicialmente desabilitado até dados carregarem
+        self.export_pdf_btn.configure(state='disabled')
+        self.export_excel_btn.configure(state='disabled')
+
+        ttk.Button(
+            buttons_frame,
+            text="💾 Salvar",
+            style='Modern.TButton',
+            command=self.save_settings
+        ).grid(row=0, column=2, padx=(0, 10))
+
+        ttk.Button(
+            buttons_frame,
+            text="❌ Fechar",
+            style='Modern.TButton',
+            command=self.window.destroy
+        ).grid(row=0, column=3)
     
     def create_overview_tab(self):
         """Cria a aba de visão geral com resumo executivo"""
-        overview_frame = ttk.Frame(self.notebook)
-        self.notebook.add(overview_frame, text="📊 Visão Geral")
+        # Container principal SEM scroll, usando grid responsivo
+        container = ttk.Frame(self.notebook)
+        self.notebook.add(container, text="📊 Visão Geral")
+        container.columnconfigure(0, weight=1)
+        container.rowconfigure(0, weight=0)
+        container.rowconfigure(1, weight=1)
         
         # Frame para métricas principais
-        metrics_frame = ttk.LabelFrame(overview_frame, text="Métricas Principais", padding="10")
-        metrics_frame.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=10, pady=5)
+        metrics_frame = ttk.LabelFrame(container, text="📈 Métricas", 
+                                      padding="8", style='Card.TLabelframe')
+        metrics_frame.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=5, pady=5)
         
         # Cards de métricas
         self.create_metric_cards(metrics_frame)
         
-        # Frame para gráfico de resumo
-        summary_chart_frame = ttk.LabelFrame(overview_frame, text="Resumo Visual", padding="10")
-        summary_chart_frame.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), padx=10, pady=5)
+        # Frame para gráfico de resumo - COMPACTO
+        summary_chart_frame = ttk.LabelFrame(container, text="Resumo Visual", padding="5")
+        summary_chart_frame.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=3)
         
         self.overview_chart_frame = summary_chart_frame
-        
-        # Frame para insights automáticos
-        insights_frame = ttk.LabelFrame(overview_frame, text="Insights Automáticos", padding="10")
-        insights_frame.grid(row=2, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=10, pady=5)
-        
-        self.insights_text = tk.Text(insights_frame, height=6, width=80, font=('Arial', 10), wrap=tk.WORD)
-        insights_scrollbar = ttk.Scrollbar(insights_frame, orient=tk.VERTICAL, command=self.insights_text.yview)
-        self.insights_text.configure(yscrollcommand=insights_scrollbar.set)
-        self.insights_text.grid(row=0, column=0, sticky=(tk.W, tk.E))
-        insights_scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
+        # Redesenhar ao redimensionar
+        self._bind_resize_redraw(self.overview_chart_frame, self.generate_overview_chart)
     
     def create_metric_cards(self, parent):
         """Cria cards com métricas principais"""
-        # Frame para os cards
+        # Frame para os cards compactos
         cards_frame = ttk.Frame(parent)
-        cards_frame.grid(row=0, column=0, sticky=(tk.W, tk.E))
+        cards_frame.grid(row=0, column=0, sticky=(tk.W, tk.E), pady=3)
         
-        # Card 1 - Total de registros
-        self.total_card = ttk.LabelFrame(cards_frame, text="Total de Registros", padding="5")
-        self.total_card.grid(row=0, column=0, padx=5, pady=5)
-        self.total_value = ttk.Label(self.total_card, text="0", font=('Arial', 20, 'bold'), foreground='blue')
+        # Card 1 - Total de registros compacto
+        self.total_card = ttk.LabelFrame(cards_frame, text="📊 Total", 
+                                        padding="8", style='Card.TLabelframe')
+        self.total_card.grid(row=0, column=0, padx=5, pady=3)
+        self.total_value = ttk.Label(self.total_card, text="0", 
+                                     font=('Segoe UI', 18, 'bold'), foreground='#238CF5')
         self.total_value.grid(row=0, column=0)
         
-        # Card 2 - Acesso à Internet
-        self.internet_card = ttk.LabelFrame(cards_frame, text="Com Internet", padding="5")
-        self.internet_card.grid(row=0, column=1, padx=5, pady=5)
-        self.internet_value = ttk.Label(self.internet_card, text="0%", font=('Arial', 20, 'bold'), foreground='green')
+        # Card 2 - Acesso à Internet compacto
+        self.internet_card = ttk.LabelFrame(cards_frame, text="🌐 Internet", 
+                                           padding="8", style='Card.TLabelframe')
+        self.internet_card.grid(row=0, column=1, padx=5, pady=3)
+        self.internet_value = ttk.Label(self.internet_card, text="0%", 
+                                       font=('Segoe UI', 18, 'bold'), foreground='#34D399')
         self.internet_value.grid(row=0, column=0)
         
-        # Card 3 - Pessoas com Deficiência
-        self.disability_card = ttk.LabelFrame(cards_frame, text="Com Deficiência", padding="5")
-        self.disability_card.grid(row=0, column=2, padx=5, pady=5)
-        self.disability_value = ttk.Label(self.disability_card, text="0%", font=('Arial', 20, 'bold'), foreground='orange')
+        # Card 3 - Pessoas com Deficiência compacto
+        self.disability_card = ttk.LabelFrame(cards_frame, text="♿ Deficiência", 
+                                             padding="8", style='Card.TLabelframe')
+        self.disability_card.grid(row=0, column=2, padx=5, pady=3)
+        self.disability_value = ttk.Label(self.disability_card, text="0%", 
+                                         font=('Segoe UI', 18, 'bold'), foreground='#FB923C')
         self.disability_value.grid(row=0, column=0)
         
-        # Card 4 - Idade Média
-        self.age_card = ttk.LabelFrame(cards_frame, text="Idade Média", padding="5")
-        self.age_card.grid(row=0, column=3, padx=5, pady=5)
-        self.age_value = ttk.Label(self.age_card, text="0", font=('Arial', 20, 'bold'), foreground='purple')
+        # Card 4 - Idade Média compacto
+        self.age_card = ttk.LabelFrame(cards_frame, text="👥 Idade", 
+                                      padding="8", style='Card.TLabelframe')
+        self.age_card.grid(row=0, column=3, padx=5, pady=3)
+        self.age_value = ttk.Label(self.age_card, text="0", 
+                                  font=('Segoe UI', 18, 'bold'), foreground='#8B5CF6')
         self.age_value.grid(row=0, column=0)
     
     def on_chart_type_changed(self, event=None):
@@ -553,76 +634,114 @@ class ReportsWindow:
     
     def create_analysis_tab(self):
         """Cria a aba de análise avançada"""
-        analysis_frame = ttk.Frame(self.notebook)
-        self.notebook.add(analysis_frame, text="🔍 Análise Avançada")
+        # Container principal sem scroll, com grid
+        container = ttk.Frame(self.notebook)
+        self.notebook.add(container, text="🔍 Análise Avançada")
+        container.columnconfigure(0, weight=1)
+        container.columnconfigure(1, weight=1)
+        container.rowconfigure(0, weight=1)
         
-        # Frame para análise de correlação
-        correlation_frame = ttk.LabelFrame(analysis_frame, text="Análise de Correlação", padding="10")
-        correlation_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=10, pady=5)
+        # Frame para análise de correlação - COMPACTO
+        correlation_frame = ttk.LabelFrame(container, text="Análise de Correlação", padding="5")
+        correlation_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=3, pady=3)
         
         self.correlation_chart_frame = correlation_frame
         
-        # Frame para tendências
-        trends_frame = ttk.LabelFrame(analysis_frame, text="Análise de Tendências", padding="10")
-        trends_frame.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=10, pady=5)
+        # Frame para tendências - COMPACTO
+        trends_frame = ttk.LabelFrame(container, text="Análise de Tendências", padding="5")
+        trends_frame.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=3, pady=3)
         
         self.trends_chart_frame = trends_frame
     
     def create_statistics_tab(self):
         """Cria a aba de estatísticas gerais"""
-        stats_frame = ttk.Frame(self.notebook)
-        self.notebook.add(stats_frame, text="Estatísticas Gerais")
+        # Container principal sem scroll
+        container = ttk.Frame(self.notebook)
+        self.notebook.add(container, text="📈 Estatísticas Gerais")
+        container.columnconfigure(0, weight=1)
+        container.rowconfigure(0, weight=0)
+        container.rowconfigure(1, weight=1)
         
-        # Frame para estatísticas numéricas
-        numbers_frame = ttk.LabelFrame(stats_frame, text="Resumo Estatístico", padding="10")
-        numbers_frame.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=10, pady=5)
+        # Frame para estatísticas numéricas - COMPACTO
+        numbers_frame = ttk.LabelFrame(container, text="📊 Resumo", 
+                                      padding="3", style='Card.TLabelframe')
+        numbers_frame.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E), padx=3, pady=2)
         
-        self.stats_text = tk.Text(numbers_frame, height=8, width=80, font=('Courier', 10))
-        self.stats_text.grid(row=0, column=0, sticky=(tk.W, tk.E))
+        self.stats_text = tk.Text(numbers_frame, height=4, width=90, 
+                                 font=('Consolas', 8), bg='#21262D', fg='#F0F6FC',
+                                 relief='flat', borderwidth=0)
+        self.stats_text.grid(row=0, column=0, sticky=(tk.W, tk.E), padx=2, pady=2)
         
         # Scrollbar para o texto
         stats_scrollbar = ttk.Scrollbar(numbers_frame, orient=tk.VERTICAL, command=self.stats_text.yview)
         self.stats_text.configure(yscrollcommand=stats_scrollbar.set)
         stats_scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
         
-        # Frame para gráfico de pizza - distribuição geral
-        self.stats_chart_frame = ttk.LabelFrame(stats_frame, text="Distribuição por Gênero", padding="10")
-        self.stats_chart_frame.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), padx=10, pady=5)
+        # Frame para gráfico de pizza - COMPACTO
+        self.stats_chart_frame = ttk.LabelFrame(container, text="👥 Distribuição por Gênero", 
+                                               padding="3", style='Card.TLabelframe')
+        self.stats_chart_frame.grid(row=1, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), 
+                                    padx=3, pady=2)
+        # Redesenhar ao redimensionar
+        self._bind_resize_redraw(self.stats_chart_frame, self.generate_gender_chart)
     
     def create_demographics_tab(self):
         """Cria a aba de dados demográficos"""
-        demo_frame = ttk.Frame(self.notebook)
-        self.notebook.add(demo_frame, text="Demografia")
+        # Container principal sem scroll, com grid responsivo
+        container = ttk.Frame(self.notebook)
+        self.notebook.add(container, text="👥 Demografia")
+        container.columnconfigure(0, weight=1)
+        container.columnconfigure(1, weight=1)
+        container.rowconfigure(0, weight=1)
         
-        # Frame para gráfico de idade
-        self.age_chart_frame = ttk.LabelFrame(demo_frame, text="Distribuição por Faixa Etária", padding="10")
-        self.age_chart_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=10, pady=5)
+        # Frame para gráfico de idade - COMPACTO
+        self.age_chart_frame = ttk.LabelFrame(container, text="📅 Faixa Etária", 
+                                             padding="5", style='Card.TLabelframe')
+        self.age_chart_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=3, pady=3)
+        # Redesenhar ao redimensionar
+        self._bind_resize_redraw(self.age_chart_frame, self.generate_age_chart)
         
-        # Frame para gráfico de renda
-        self.income_chart_frame = ttk.LabelFrame(demo_frame, text="Distribuição por Renda", padding="10")
-        self.income_chart_frame.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=10, pady=5)
+        # Frame para gráfico de renda - COMPACTO
+        self.income_chart_frame = ttk.LabelFrame(container, text="💰 Renda", 
+                                                padding="5", style='Card.TLabelframe')
+        self.income_chart_frame.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=3, pady=3)
+        # Redesenhar ao redimensionar
+        self._bind_resize_redraw(self.income_chart_frame, self.generate_income_chart)
     
     def create_digital_access_tab(self):
         """Cria a aba de acesso digital"""
-        digital_frame = ttk.Frame(self.notebook)
-        self.notebook.add(digital_frame, text="Acesso Digital")
+        # Container principal sem scroll, com grid responsivo
+        container = ttk.Frame(self.notebook)
+        self.notebook.add(container, text="Acesso Digital")
+        container.columnconfigure(0, weight=1)
+        container.columnconfigure(1, weight=1)
+        container.rowconfigure(0, weight=1)
         
-        # Frame para gráfico de internet
-        self.internet_chart_frame = ttk.LabelFrame(digital_frame, text="Acesso à Internet", padding="10")
-        self.internet_chart_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=10, pady=5)
+        # Frame para gráfico de internet - COMPACTO
+        self.internet_chart_frame = ttk.LabelFrame(container, text="Acesso à Internet", padding="5")
+        self.internet_chart_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=3, pady=3)
+        # Redesenhar ao redimensionar
+        self._bind_resize_redraw(self.internet_chart_frame, self.generate_internet_chart)
         
-        # Frame para gráfico de dispositivos
-        self.devices_chart_frame = ttk.LabelFrame(digital_frame, text="Uso de Dispositivos", padding="10")
-        self.devices_chart_frame.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=10, pady=5)
+        # Frame para gráfico de dispositivos - COMPACTO
+        self.devices_chart_frame = ttk.LabelFrame(container, text="Uso de Dispositivos", padding="5")
+        self.devices_chart_frame.grid(row=0, column=1, sticky=(tk.W, tk.E, tk.N, tk.S), padx=3, pady=3)
+        # Redesenhar ao redimensionar
+        self._bind_resize_redraw(self.devices_chart_frame, self.generate_devices_chart)
     
     def create_regional_tab(self):
         """Cria a aba de análise regional"""
-        regional_frame = ttk.Frame(self.notebook)
-        self.notebook.add(regional_frame, text="Análise Regional")
+        # Container principal sem scroll
+        container = ttk.Frame(self.notebook)
+        self.notebook.add(container, text="Análise Regional")
+        container.columnconfigure(0, weight=1)
+        container.rowconfigure(0, weight=1)
         
-        # Frame para gráfico regional
-        self.regional_chart_frame = ttk.LabelFrame(regional_frame, text="Distribuição por Região", padding="10")
-        self.regional_chart_frame.grid(row=0, column=0, columnspan=2, sticky=(tk.W, tk.E, tk.N, tk.S), padx=10, pady=5)
+        # Frame para gráfico regional - COMPACTO
+        self.regional_chart_frame = ttk.LabelFrame(container, text="Distribuição por Região", padding="5")
+        self.regional_chart_frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=5, pady=3)
+        # Redesenhar ao redimensionar
+        self._bind_resize_redraw(self.regional_chart_frame, self.generate_regional_chart)
     
     def load_data_and_generate_reports(self, filtered_data=None):
         """Carrega dados e gera relatórios com tratamento robusto de erros"""
@@ -718,6 +837,8 @@ class ReportsWindow:
             if not self.data:
                 self.logger.warning("Nenhum dado válido para gerar relatórios")
                 messagebox.showwarning("Aviso", "Nenhum dado válido encontrado para gerar relatórios.")
+                # Desabilitar exportações
+                self._update_export_buttons(enabled=False)
                 return
             
             # Gerar estatísticas e gráficos
@@ -731,6 +852,8 @@ class ReportsWindow:
                 self.generate_devices_chart()
                 self.generate_regional_chart()
                 self.logger.info("Relatórios gerados com sucesso")
+                # Habilitar exportações pois há dados carregados e gráficos gerados
+                self._update_export_buttons(enabled=True)
             except Exception as chart_error:
                 self.logger.error(f"Erro ao gerar gráficos: {chart_error}")
                 messagebox.showerror("Erro", f"Erro ao gerar gráficos: {chart_error}")
@@ -738,6 +861,23 @@ class ReportsWindow:
         except Exception as e:
             self.logger.error(f"Erro geral ao carregar dados: {e}")
             messagebox.showerror("Erro", f"Erro ao carregar dados: {e}")
+            self._update_export_buttons(enabled=False)
+
+    def _update_export_buttons(self, enabled: bool):
+        """Ativa ou desativa botões de exportação conforme disponibilidade de dados."""
+        state = 'normal' if enabled else 'disabled'
+        try:
+            if hasattr(self, 'export_pdf_btn'):
+                self.export_pdf_btn.configure(state=state)
+            if hasattr(self, 'export_excel_btn'):
+                self.export_excel_btn.configure(state=state)
+            # Atualizar texto de status
+            if enabled:
+                self.status_label.configure(text="Pronto para exportar", foreground='green')
+            else:
+                self.status_label.configure(text="Sem dados para exportação", foreground='orange')
+        except Exception:
+            pass
     
     def generate_statistics(self):
         """Gera estatísticas dos dados com tratamento robusto de erros"""
@@ -934,7 +1074,10 @@ Verifique os logs para mais detalhes."""
             gender_counts[gender] = gender_counts.get(gender, 0) + 1
         
         if gender_counts:
-            fig, ax = plt.subplots(figsize=(8, 6))
+            # Figsize dinâmico e formato quadrado para pizza
+            w, h = self._get_dynamic_figsize(self.stats_chart_frame, base=(8, 6))
+            size = min(w, h)
+            fig, ax = plt.subplots(figsize=(size, size))
             colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4']
             wedges, texts, autotexts = ax.pie(gender_counts.values(), labels=gender_counts.keys(), 
                                             autopct='%1.1f%%', colors=colors[:len(gender_counts)],
@@ -943,9 +1086,9 @@ Verifique os logs para mais detalhes."""
             # Melhorar aparência do título
             ax.set_title('Distribuição por Gênero', fontweight='bold', fontsize=14, pad=20)
             
-            # Adicionar legenda com contagens
+            # Adicionar legenda interna para evitar overflow lateral
             legend_labels = [f'{gender}: {count:,} pessoas' for gender, count in gender_counts.items()]
-            ax.legend(wedges, legend_labels, title="Detalhes", loc="center left", bbox_to_anchor=(1, 0, 0.5, 1))
+            ax.legend(wedges, legend_labels, title="Detalhes", loc="upper right")
             
             canvas = FigureCanvasTkAgg(fig, self.stats_chart_frame)
             canvas.draw()
@@ -1019,7 +1162,8 @@ Verifique os logs para mais detalhes."""
                 else:
                     age_ranges['65+'] += 1
             
-            fig, ax = plt.subplots(figsize=(8, 6))
+            figsize = self._get_dynamic_figsize(self.age_chart_frame, base=(8, 6))
+            fig, ax = plt.subplots(figsize=figsize)
             bars = ax.bar(age_ranges.keys(), age_ranges.values(), color='#45B7D1', alpha=0.8)
             
             # Melhorar aparência
@@ -1046,7 +1190,7 @@ Verifique os logs para mais detalhes."""
                    verticalalignment='top', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
             
             plt.xticks(rotation=0)
-            plt.tight_layout()
+            fig.tight_layout()
             
             canvas = FigureCanvasTkAgg(fig, self.age_chart_frame)
             canvas.draw()
@@ -1104,7 +1248,8 @@ Verifique os logs para mais detalhes."""
                 if income not in sorted_income:
                     sorted_income[income] = count
             
-            fig, ax = plt.subplots(figsize=(10, 6))
+            figsize = self._get_dynamic_figsize(self.income_chart_frame, base=(10, 6))
+            fig, ax = plt.subplots(figsize=figsize)
             colors = plt.cm.Set3(range(len(sorted_income)))
             bars = ax.bar(range(len(sorted_income)), list(sorted_income.values()), color=colors, alpha=0.8)
             
@@ -1135,7 +1280,7 @@ Verifique os logs para mais detalhes."""
             ax.text(0.02, 0.98, info_text, transform=ax.transAxes, 
                    verticalalignment='top', bbox=dict(boxstyle='round', facecolor='lightblue', alpha=0.8))
             
-            plt.tight_layout()
+            fig.tight_layout()
             
             canvas = FigureCanvasTkAgg(fig, self.income_chart_frame)
             canvas.draw()
@@ -1160,7 +1305,10 @@ Verifique os logs para mais detalhes."""
         if internet_counts['Não Informado'] == 0:
             del internet_counts['Não Informado']
         
-        fig, ax = plt.subplots(figsize=(7, 5))
+        # Figsize dinâmico e formato quadrado para pizza
+        w, h = self._get_dynamic_figsize(self.internet_chart_frame, base=(7, 5))
+        size = min(w, h)
+        fig, ax = plt.subplots(figsize=(size, size))
         colors = ['#4ECDC4', '#FF6B6B', '#FFA500'][:len(internet_counts)]
         wedges, texts, autotexts = ax.pie(internet_counts.values(), labels=internet_counts.keys(), 
                                         autopct='%1.1f%%', colors=colors,
@@ -1169,9 +1317,9 @@ Verifique os logs para mais detalhes."""
         # Melhorar aparência do título
         ax.set_title('Acesso à Internet', fontweight='bold', fontsize=14, pad=20)
         
-        # Adicionar legenda com contagens
+        # Adicionar legenda interna para evitar overflow
         legend_labels = [f'{status}: {count:,} pessoas' for status, count in internet_counts.items()]
-        ax.legend(wedges, legend_labels, title="Detalhes", loc="center left", bbox_to_anchor=(1, 0, 0.5, 1))
+        ax.legend(wedges, legend_labels, title="Detalhes", loc="upper right")
         
         canvas = FigureCanvasTkAgg(fig, self.internet_chart_frame)
         canvas.draw()
@@ -1232,7 +1380,8 @@ Verifique os logs para mais detalhes."""
             # Ordenar dispositivos por quantidade (decrescente)
             sorted_devices = dict(sorted(device_counts.items(), key=lambda x: x[1], reverse=True))
             
-            fig, ax = plt.subplots(figsize=(12, 8))
+            figsize = self._get_dynamic_figsize(self.devices_chart_frame, base=(12, 8))
+            fig, ax = plt.subplots(figsize=figsize)
             colors = plt.cm.tab20(range(len(sorted_devices)))
             bars = ax.bar(range(len(sorted_devices)), list(sorted_devices.values()), color=colors, alpha=0.8)
             
@@ -1266,7 +1415,7 @@ Verifique os logs para mais detalhes."""
             ax.text(0.02, 0.98, info_text, transform=ax.transAxes, 
                    verticalalignment='top', bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.8))
             
-            plt.tight_layout()
+            fig.tight_layout()
             
             canvas = FigureCanvasTkAgg(fig, self.devices_chart_frame)
             canvas.draw()
@@ -1290,7 +1439,8 @@ Verifique os logs para mais detalhes."""
             regional_counts[region] = regional_counts.get(region, 0) + 1
         
         if regional_counts:
-            fig, ax = plt.subplots(figsize=(10, 6))
+            figsize = self._get_dynamic_figsize(self.regional_chart_frame, base=(10, 6))
+            fig, ax = plt.subplots(figsize=figsize)
             bars = ax.bar(range(len(regional_counts)), list(regional_counts.values()), color='#A8E6CF')
             ax.set_title('Distribuição por Região')
             ax.set_xlabel('Região')
@@ -1304,7 +1454,7 @@ Verifique os logs para mais detalhes."""
                 ax.text(bar.get_x() + bar.get_width()/2., height,
                        f'{int(height)}', ha='center', va='bottom')
             
-            plt.tight_layout()
+            fig.tight_layout()
             
             canvas = FigureCanvasTkAgg(fig, self.regional_chart_frame)
             canvas.draw()
@@ -1535,8 +1685,12 @@ Verifique os logs para mais detalhes."""
             # Atualizar cards de métricas
             self.update_metric_cards()
             
-            # Criar gráfico de resumo
-            fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=self.chart_config['figure_size'])
+            # Criar gráfico de resumo com tamanho dinâmico para evitar overflow
+            base_size = self.chart_config.get('figure_size', (8, 5))
+            w, h = self._get_dynamic_figsize(self.overview_chart_frame, base=base_size)
+            # Para grid 2x2, garantir altura suficiente
+            h = max(h, w * 0.75)
+            fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(w, h))
             
             # Gráfico 1: Distribuição por gênero com formatação melhorada
             gender_counts = {}
@@ -1611,6 +1765,7 @@ Verifique os logs para mais detalhes."""
             plt.tight_layout()
             
             # Adicionar ao frame
+            fig.tight_layout()
             canvas = FigureCanvasTkAgg(fig, self.overview_chart_frame)
             canvas.draw()
             canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)

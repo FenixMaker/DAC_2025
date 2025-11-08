@@ -1,0 +1,10 @@
+{
+  "default_period_days": 30,
+  "decimal_places": 2,
+  "percentage_format": "0.1%",
+  "export_format": "png",
+  "resolution_dpi": 300,
+  "include_metadata": true,
+  "header_template": "",
+  "footer_template": ""
+}

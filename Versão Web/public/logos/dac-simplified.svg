@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <radialGradient id="g" cx="35%" cy="30%" r="85%">
+      <stop offset="0%" stop-color="#1fb6ff"/>
+      <stop offset="100%" stop-color="#7c3aed"/>
+    </radialGradient>
+  </defs>
+  <circle cx="128" cy="128" r="120" fill="url(#g)" />
+  <text x="128" y="148" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="96" font-weight="700" text-anchor="middle" fill="#ffffff">DAC</text>
+</svg>

@@ -1,0 +1,7 @@
+{
+  "max_query_rows": 10000,
+  "query_timeout_seconds": 30,
+  "chart_quality": "high",
+  "auto_refresh_interval": 60,
+  "memory_limit_mb": 512
+}

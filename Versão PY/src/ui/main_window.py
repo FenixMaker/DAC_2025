@@ -17,6 +17,8 @@ from .modern_theme import theme
 from .theme_manager import ThemeManager
 from .modern_components import KPICard, ModernButton, ModernSidebar
 from .icons import get_icon, create_icon_button, get_icon_color
+from .logo_assets import load_logo_tk
+from ..gui.configuracoes_tab import ConfiguracoesTab
 
 class MainWindow:
     """Janela principal da aplicação DAC"""
@@ -34,6 +36,14 @@ class MainWindow:
         self.root.title("Sistema DAC - Digital Analysis Center")
         self.root.geometry("1400x900")
         self.root.minsize(1200, 800)
+
+        # Ícone da janela (simplificado para clareza em tamanhos pequenos)
+        try:
+            logo_icon = load_logo_tk("simplified", size=64)
+            # Tkinter suporta somente .ico para iconbitmap, mas PhotoImage pode para taskbar em alguns sistemas
+            self.root.iconphoto(True, logo_icon)
+        except Exception:
+            pass
         
         # Aplicar tema moderno
         self.theme_manager = ThemeManager()
@@ -97,7 +107,7 @@ class MainWindow:
         self.sidebar.add_menu_item("query", "Consultar", get_icon("search"), self.open_query_window)
         self.sidebar.add_menu_item("reports", "Relatórios", get_icon("reports"), self.open_reports_window)
         self.sidebar.add_menu_item("db_status", "Status do Banco", get_icon("database"), self.open_db_status_window)
-        self.sidebar.add_menu_item("settings", "Configurações", get_icon("settings"), None)
+        self.sidebar.add_menu_item("settings", "Configurações", get_icon("settings"), self.open_settings)
         
         # Definir dashboard como ativo
         if "dashboard" in self.sidebar.buttons:
@@ -133,11 +143,20 @@ class MainWindow:
         header_frame.grid(row=0, column=0, sticky='ew', pady=(0, 0))
         header_frame.columnconfigure(0, weight=1)
         
-        # Título principal
-        title_label = ttk.Label(header_frame, 
+        # Marca com logo + título
+        brand_frame = ttk.Frame(header_frame, style='Header.TFrame')
+        brand_frame.grid(row=0, column=0, sticky='w')
+        try:
+            logo_img = load_logo_tk("color", size=40)
+            logo_label = ttk.Label(brand_frame, image=logo_img)
+            logo_label.image = logo_img  # evitar GC
+            logo_label.grid(row=0, column=0, padx=(0, 10))
+        except Exception:
+            pass
+        title_label = ttk.Label(brand_frame,
                                text="Sistema de Análise Digital",
                                style='Title.TLabel')
-        title_label.grid(row=0, column=0, sticky='w')
+        title_label.grid(row=0, column=1, sticky='w')
         
         # Subtítulo com espaçamento consistente
         subtitle_label = ttk.Label(header_frame,
@@ -729,62 +748,47 @@ class MainWindow:
             messagebox.showerror("Erro", f"Erro ao exportar dados: {e}")
     
     def open_settings(self):
-        """Abre a janela de configurações"""
+        """Abre a interface completa de Configurações (com abas editáveis)."""
         try:
-            # Criar janela de configurações simples
+            # Janela de configurações completa
             settings_window = tk.Toplevel(self.root)
-            settings_window.title("⚙️ Configurações do Sistema")
-            settings_window.geometry("500x400")
-            settings_window.resizable(False, False)
-            settings_window.configure(bg='#0D1117')
-            
-            # Centralizar janela
+            settings_window.title("⚙️ Configurações")
+            settings_window.geometry("1000x700")
+            settings_window.minsize(900, 600)
             settings_window.transient(self.root)
-            settings_window.grab_set()
-            
-            # Conteúdo da janela
-            main_frame = tk.Frame(settings_window, bg='#0D1117')
-            main_frame.pack(fill='both', expand=True, padx=20, pady=20)
-            
-            # Título
-            title_label = tk.Label(main_frame,
-                                  text="⚙️ Configurações do Sistema",
-                                  font=('Segoe UI', 16, 'bold'),
-                                  bg='#0D1117',
-                                  fg='#F0F6FC')
-            title_label.pack(pady=(0, 20))
-            
-            # Configurações simuladas
-            config_items = [
-                "🎨 Tema da Interface: Escuro",
-                "💾 Banco de Dados: SQLite",
-                "📊 Formato de Gráficos: PNG",
-                "🔄 Auto-atualização: Ativado",
-                "📝 Logging: Detalhado"
-            ]
-            
-            for item in config_items:
-                item_label = tk.Label(main_frame,
-                                     text=item,
-                                     font=('Segoe UI', 11),
-                                     bg='#0D1117',
-                                     fg='#8B949E',
-                                     anchor='w')
-                item_label.pack(fill='x', pady=5)
-            
-            # Botão fechar
-            close_btn = tk.Button(main_frame,
-                                 text="✅ Fechar",
-                                 font=('Segoe UI', 11, 'bold'),
-                                 bg='#238CF5',
-                                 fg='white',
-                                 relief='flat',
-                                 bd=0,
-                                 padx=20,
-                                 pady=10,
-                                 command=settings_window.destroy)
-            close_btn.pack(pady=(20, 0))
-            
+
+            # Aplicar tema ao toplevel, se disponível
+            try:
+                self.theme_manager.apply_theme(settings_window)
+            except Exception:
+                pass
+
+            # Container principal
+            container = ttk.Frame(settings_window)
+            container.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+            # Aba de configurações completa com Notebook e botões de ação
+            def _on_db_changed(new_path: str):
+                try:
+                    # Fecha conexão atual e reinicializa com novo caminho
+                    if hasattr(self, 'db_manager') and self.db_manager:
+                        try:
+                            self.db_manager.close()
+                        except Exception:
+                            pass
+                    # Cria novo gerenciador com o caminho selecionado
+                    from ..database.database_manager import DatabaseManager as _DBM
+                    self.db_manager = _DBM(new_path)
+                    self.db_manager.initialize_database()
+                    self.logger.info(f"Banco de dados alternado para: {new_path}")
+                    messagebox.showinfo("Banco de Dados", f"Conectado ao banco:\n{new_path}")
+                except Exception as e:
+                    self.logger.error(f"Erro ao alternar banco: {e}")
+                    messagebox.showerror("Erro", f"Falha ao alternar banco:\n{e}")
+
+            config_tab = ConfiguracoesTab(container, on_database_changed=_on_db_changed)
+            config_tab.pack(fill=tk.BOTH, expand=True)
+
         except Exception as e:
             self.logger.error(f"Erro ao abrir configurações: {e}")
             messagebox.showerror("Erro", f"Erro ao abrir configurações: {e}")
