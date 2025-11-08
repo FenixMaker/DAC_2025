@@ -131,12 +131,6 @@ dmypy.json
 # ===== SISTEMA DAC ESPECÍFICO =====
 
 # Bancos de dados
-*.db
-*.sqlite
-*.sqlite3
-data/*.db
-data/*.sqlite
-data/*.sqlite3
 
 # Logs do sistema
 logs/

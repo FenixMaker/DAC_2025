@@ -281,12 +281,13 @@ Temporary Items
 # ============================================================================
 
 # Dados sensíveis (não versionar dados reais)
-/recursos/dados/database/*.db
-/recursos/dados/database/*.sqlite
-/Versão PY/data/*.db
-/Versão PY/data/*.sqlite
-/Banco de dados/*.db
-/Banco de dados/*.sqlite
+# Permitir bancos de dados do projeto acadêmico (não sensíveis)
+!/recursos/dados/database/*.db
+!/recursos/dados/database/*.sqlite
+!/Versão PY/data/*.db
+!/Versão PY/data/*.sqlite
+!/Banco de dados/*.db
+!/Banco de dados/*.sqlite
 
 # Exceto arquivos de exemplo
 !/recursos/dados/amostras/*.csv
