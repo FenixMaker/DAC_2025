@@ -1,4 +1,6 @@
 @echo off
+setlocal EnableDelayedExpansion
+chcp 65001 >nul
 :: ============================================================================
 :: Iniciar Tudo - Sistema DAC
 :: Lança um verificador simples: se faltar algo, roda setup.bat automaticamente
@@ -107,5 +109,9 @@ call Iniciar-Desktop.bat
 goto end
 
 :end
+echo.
+echo ✅ Processo concluido. Esta janela permanecera aberta.
+echo.
+pause
 endlocal
 exit /b 0

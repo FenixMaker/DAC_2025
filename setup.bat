@@ -1,4 +1,6 @@
 @echo off
+setlocal EnableDelayedExpansion
+chcp 65001 >nul
 REM ============================================================================
 REM Sistema DAC - Script de Configuracao Automatica
 REM Autor: Alejandro Alexandre (RA: 197890)
@@ -421,4 +423,6 @@ if /i "!START_NOW!"=="S" (
 )
 
 echo.
-pause
+echo Pressione qualquer tecla para sair...
+pause >nul
+endlocal

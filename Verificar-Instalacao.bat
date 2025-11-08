@@ -1,4 +1,6 @@
 @echo off
+setlocal EnableDelayedExpansion
+chcp 65001 >nul
 REM ============================================================================
 REM Sistema DAC - Script de Verificacao da Instalacao
 REM Verifica se todos os componentes foram instalados corretamente
@@ -184,10 +186,16 @@ if !ERRORS! == 0 (
 echo ========================================================================
 echo.
 
+echo.
 if !ERRORS! GTR 0 (
-    exit /b 1
+    echo ❌ Existem erros na instalacao.
+    echo    Execute setup.bat e tente novamente.
+    echo.
+    pause
+    endlocal & exit /b 1
 ) else (
-    exit /b 0
+    echo ✅ Instalacao verificada com sucesso.
+    echo.
+    pause
+    endlocal & exit /b 0
 )
-
-pause

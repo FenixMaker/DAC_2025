@@ -114,5 +114,10 @@ echo  - Se 'git check-ignore' mostrar uma regra, ainda ha algo ignorando o arqui
 echo  - Use 'git add -f %DBFILE%' para forcar a adicao caso necessario.
 echo ===============================================
 
+echo.
+echo Final do teste. Pressione uma tecla para sair...
+pause
+
 :end
-end
+endlocal
+exit /b 0
