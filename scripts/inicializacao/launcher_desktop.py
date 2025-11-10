@@ -48,11 +48,6 @@ def check_prerequisites():
         errors.append(f"Pasta 'Versão PY' não encontrada em:\n{py_path}")
         return errors
     
-    # Verifica venv Python
-    if not (py_path / ".venv").exists():
-        errors.append("Ambiente virtual Python não criado!\n\nExecute primeiro: setup.bat")
-        return errors
-    
     # Verifica main.py
     if not (py_path / "main.py").exists():
         errors.append(f"Arquivo main.py não encontrado em:\n{py_path}")
@@ -159,8 +154,7 @@ def main():
             
             show_message(
                 "Erro - Sistema DAC",
-                "Pré-requisitos não atendidos!\n\n" + "\n\n".join(errors) + 
-                "\n\nExecute setup.bat primeiro!",
+                "Pré-requisitos não atendidos!\n\n" + "\n\n".join(errors),
                 16  # Ícone de erro
             )
             input("\nPressione ENTER para sair...")

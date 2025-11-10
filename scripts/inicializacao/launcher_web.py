@@ -10,6 +10,7 @@ import time
 import webbrowser
 from pathlib import Path
 import ctypes
+import shutil
 
 def is_admin():
     """Verifica se está executando como administrador"""
@@ -51,20 +52,6 @@ def check_prerequisites():
     if not py_path.exists():
         errors.append(f"Pasta 'Versão PY' não encontrada em:\n{py_path}")
     
-    # Verifica node_modules
-    if web_path.exists() and not (web_path / "node_modules").exists():
-        errors.append("Dependências do Node.js não instaladas!\n\nExecute primeiro: setup.bat")
-    
-    # Verifica venv Python (tenta na raiz primeiro)
-    venv_exists = False
-    if (project_root / ".venv").exists():
-        venv_exists = True
-    elif py_path.exists() and (py_path / ".venv").exists():
-        venv_exists = True
-    
-    if not venv_exists:
-        errors.append("Ambiente virtual Python não criado!\n\nExecute primeiro: setup.bat")
-    
     return errors
 
 def kill_processes():
@@ -86,39 +73,95 @@ def kill_processes():
     except:
         pass  # Ignora erros se não houver processos
 
+def _venv_python_path(py_path: Path) -> Path:
+    return py_path / ".venv" / "Scripts" / "python.exe"
+
+def _is_venv_working(venv_python: Path) -> bool:
+    try:
+        if not venv_python.exists():
+            return False
+        res = subprocess.run([str(venv_python), "-V"], capture_output=True, text=True, timeout=10)
+        return res.returncode == 0
+    except Exception:
+        return False
+
+def _recreate_venv(py_path: Path) -> Path:
+    print("\n⚠️ Ambiente virtual inválido ou ausente. Recriando automaticamente...")
+    try:
+        shutil.rmtree(py_path / ".venv", ignore_errors=True)
+    except Exception:
+        pass
+    subprocess.check_call([sys.executable, "-m", "venv", str(py_path / ".venv")])
+    venv_python = _venv_python_path(py_path)
+    try:
+        subprocess.check_call([str(venv_python), "-m", "pip", "install", "--upgrade", "pip"], cwd=str(py_path))
+        req = py_path / "requirements.txt"
+        if req.exists():
+            print("📦 Instalando dependências (requirements.txt)...")
+            subprocess.check_call([str(venv_python), "-m", "pip", "install", "-r", str(req)], cwd=str(py_path))
+        # Também instala requisitos específicos do backend
+        backend_req = py_path / "web" / "backend" / "requirements.txt"
+        if backend_req.exists():
+            print("📦 Instalando dependências do Backend (FastAPI)...")
+            subprocess.check_call([str(venv_python), "-m", "pip", "install", "-r", str(backend_req)], cwd=str(py_path))
+    except subprocess.CalledProcessError as e:
+        print(f"\n❌ Falha ao instalar dependências: {e}\n")
+        raise
+    return venv_python
+
+def _ensure_venv_ready(py_path: Path) -> Path:
+    venv_python = _venv_python_path(py_path)
+    if _is_venv_working(venv_python):
+        return venv_python
+    return _recreate_venv(py_path)
+
 def start_backend(project_root):
     """Inicia o backend FastAPI"""
     backend_path = project_root / "Versão PY" / "web" / "backend"
-    
-    # Tenta encontrar o ambiente virtual
-    venv_paths = [
-        project_root / ".venv" / "Scripts" / "python.exe",  # .venv na raiz
-        project_root / "Versão PY" / ".venv" / "Scripts" / "python.exe",  # .venv na Versão PY
-    ]
-    
-    venv_python = None
-    for path in venv_paths:
-        if path.exists():
-            venv_python = path
-            break
-    
-    if not venv_python:
-        print(f"   ⚠️  Ambiente virtual Python não encontrado!")
-        print(f"   Tentando usar Python do sistema...")
-        venv_python = "python"
-    
+    py_path = project_root / "Versão PY"
+
+    # Garante venv válida (cria automaticamente se faltar)
+    venv_python = _ensure_venv_ready(py_path)
+
+    # Verifica se uvicorn está instalado; se não, instala requisitos do backend
+    try:
+        res = subprocess.run([str(venv_python), "-c", "import uvicorn, fastapi"], capture_output=True, text=True)
+        if res.returncode != 0:
+            backend_req = py_path / "web" / "backend" / "requirements.txt"
+            if backend_req.exists():
+                print("   📦 Dependências do backend ausentes. Instalando...")
+                subprocess.check_call([str(venv_python), "-m", "pip", "install", "-r", str(backend_req)], cwd=str(py_path))
+            else:
+                print("   ⚠️ Arquivo de requisitos do backend não encontrado; instalando uvicorn e fastapi...")
+                subprocess.check_call([str(venv_python), "-m", "pip", "install", "fastapi", "uvicorn[standard]"], cwd=str(py_path))
+    except Exception as e:
+        print(f"   ⚠️ Falha ao verificar/instalar dependências do backend: {e}")
+
     os.chdir(str(backend_path))
-    
+
     # Inicia o backend em uma nova janela
     cmd = f'start "DAC Backend (FastAPI)" cmd /k "{venv_python}" -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000'
     subprocess.Popen(cmd, shell=True)
-    
+
     return True
 
 def start_frontend(project_root):
     """Inicia o frontend Next.js"""
     web_path = project_root / "Versão Web"
     
+    # Instala dependências automaticamente se node_modules não existir
+    try:
+        if (web_path / "package.json").exists():
+            if not (web_path / "node_modules").exists():
+                print("   📦 Instalando dependências do frontend (npm install)...")
+                subprocess.check_call("npm install", shell=True, cwd=str(web_path))
+            # Garante que o binário do next esteja instalado
+            if not (web_path / "node_modules" / "next").exists():
+                print("   📦 Pacote 'next' ausente. Instalando...")
+                subprocess.check_call("npm install next", shell=True, cwd=str(web_path))
+    except Exception as e:
+        print(f"   ⚠️  Falha ao instalar dependências do Node: {e}")
+
     os.chdir(str(web_path))
     
     # Inicia o frontend em uma nova janela - usando dev:frontend que não tenta iniciar o backend
@@ -160,8 +203,7 @@ def main():
             
             show_message(
                 "Erro - Sistema DAC",
-                "Pré-requisitos não atendidos!\n\n" + "\n\n".join(errors) + 
-                "\n\nExecute setup.bat primeiro!",
+                "Pré-requisitos não atendidos!\n\n" + "\n\n".join(errors),
                 16  # Ícone de erro
             )
             input("\nPressione ENTER para sair...")

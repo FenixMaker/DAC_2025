@@ -207,19 +207,22 @@ class ConfiguracoesTab(ttk.Frame):
         self.db_password_entry.grid(row=4, column=1, sticky='ew', pady=5, padx=(0, 10))
         self.db_password_entry.bind('<KeyRelease>', self.on_config_changed)
         
-        ttk.Label(scrollable_frame, text="Usuário:", font=('Arial', 10, 'bold')).grid(row=3, column=0, sticky='w', pady=5)
+        self.db_user_label = ttk.Label(scrollable_frame, text="Usuário:", font=('Arial', 10, 'bold'))
+        self.db_user_label.grid(row=3, column=0, sticky='w', pady=5)
         self.db_user_var = tk.StringVar()
         self.db_user_entry = ttk.Entry(scrollable_frame, textvariable=self.db_user_var, width=40)
         self.db_user_entry.grid(row=3, column=1, sticky='ew', pady=5, padx=(0, 10))
         self.db_user_entry.bind('<KeyRelease>', self.on_config_changed)
         
-        ttk.Label(scrollable_frame, text="Senha:", font=('Arial', 10, 'bold')).grid(row=4, column=0, sticky='w', pady=5)
+        self.db_password_label = ttk.Label(scrollable_frame, text="Senha:", font=('Arial', 10, 'bold'))
+        self.db_password_label.grid(row=4, column=0, sticky='w', pady=5)
         self.db_password_var = tk.StringVar()
         self.db_password_entry = ttk.Entry(scrollable_frame, textvariable=self.db_password_var, show="*", width=40)
         self.db_password_entry.grid(row=4, column=1, sticky='ew', pady=5, padx=(0, 10))
         self.db_password_entry.bind('<KeyRelease>', self.on_config_changed)
         
-        ttk.Label(scrollable_frame, text="SSL Mode:", font=('Arial', 10, 'bold')).grid(row=5, column=0, sticky='w', pady=5)
+        self.db_ssl_label = ttk.Label(scrollable_frame, text="SSL Mode:", font=('Arial', 10, 'bold'))
+        self.db_ssl_label.grid(row=5, column=0, sticky='w', pady=5)
         self.db_ssl_var = tk.StringVar()
         self.db_ssl_combo = ttk.Combobox(scrollable_frame, textvariable=self.db_ssl_var, 
                                          values=['disable', 'allow', 'prefer', 'require', 'verify-ca', 'verify-full'],
@@ -227,19 +230,22 @@ class ConfiguracoesTab(ttk.Frame):
         self.db_ssl_combo.grid(row=5, column=1, sticky='ew', pady=5, padx=(0, 10))
         self.db_ssl_combo.bind('<<ComboboxSelected>>', self.on_config_changed)
         
-        ttk.Label(scrollable_frame, text="Tamanho do Pool:", font=('Arial', 10, 'bold')).grid(row=6, column=0, sticky='w', pady=5)
+        self.db_pool_label = ttk.Label(scrollable_frame, text="Tamanho do Pool:", font=('Arial', 10, 'bold'))
+        self.db_pool_label.grid(row=6, column=0, sticky='w', pady=5)
         self.db_pool_var = tk.StringVar()
         self.db_pool_entry = ttk.Entry(scrollable_frame, textvariable=self.db_pool_var, width=40)
         self.db_pool_entry.grid(row=6, column=1, sticky='ew', pady=5, padx=(0, 10))
         self.db_pool_entry.bind('<KeyRelease>', self.on_config_changed)
         
-        ttk.Label(scrollable_frame, text="Timeout (ms):", font=('Arial', 10, 'bold')).grid(row=7, column=0, sticky='w', pady=5)
+        self.db_timeout_label = ttk.Label(scrollable_frame, text="Timeout (ms):", font=('Arial', 10, 'bold'))
+        self.db_timeout_label.grid(row=7, column=0, sticky='w', pady=5)
         self.db_timeout_var = tk.StringVar()
         self.db_timeout_entry = ttk.Entry(scrollable_frame, textvariable=self.db_timeout_var, width=40)
         self.db_timeout_entry.grid(row=7, column=1, sticky='ew', pady=5, padx=(0, 10))
         self.db_timeout_entry.bind('<KeyRelease>', self.on_config_changed)
         
-        ttk.Label(scrollable_frame, text="Tentativas de Reconexão:", font=('Arial', 10, 'bold')).grid(row=8, column=0, sticky='w', pady=5)
+        self.db_retry_label = ttk.Label(scrollable_frame, text="Tentativas de Reconexão:", font=('Arial', 10, 'bold'))
+        self.db_retry_label.grid(row=8, column=0, sticky='w', pady=5)
         self.db_retry_var = tk.StringVar()
         self.db_retry_entry = ttk.Entry(scrollable_frame, textvariable=self.db_retry_var, width=40)
         self.db_retry_entry.grid(row=8, column=1, sticky='ew', pady=5, padx=(0, 10))
@@ -260,7 +266,8 @@ class ConfiguracoesTab(ttk.Frame):
         self.test_result_label = ttk.Label(test_frame, text="", font=('Arial', 10))
         self.test_result_label.pack(side=tk.LEFT, padx=10)
         
-        # Configura o grid
+        # Configura o grid para expandir e reduzir espaço em branco
+        scrollable_frame.grid_columnconfigure(0, weight=1)
         scrollable_frame.grid_columnconfigure(1, weight=1)
         
         # Empacota os widgets de scroll
@@ -577,7 +584,9 @@ class ConfiguracoesTab(ttk.Frame):
             self.db_pool_var.set(str(db_config.get('pool_size', 10)))
             self.db_timeout_var.set(str(db_config.get('timeout_ms', 30000)))
             self.db_retry_var.set(str(db_config.get('retry_count', 3)))
-            self.sqlite_path_var.set(db_config.get('sqlite_path', r'c:\Users\FenixPosts\Desktop\DAC_2025\Banco de dados\dac_database.db'))
+            # Usa o caminho padrão vindo do ConfigManager (Versão PY/data/dac_database.db)
+            default_sqlite_path = self.config_manager.get_default_config('database').get('sqlite_path')
+            self.sqlite_path_var.set(db_config.get('sqlite_path', default_sqlite_path))
             
             # Atualiza a interface baseada no tipo de banco de dados
             self.on_db_type_changed()
@@ -814,11 +823,33 @@ class ConfiguracoesTab(ttk.Frame):
             # Desabilita campos de usuário/senha para SQLite
             self.db_user_entry.config(state='disabled')
             self.db_password_entry.config(state='disabled')
+            # Oculta campos específicos de PostgreSQL
+            self.db_user_label.grid_remove()
+            self.db_password_label.grid_remove()
+            self.db_ssl_label.grid_remove()
+            self.db_ssl_combo.grid_remove()
+            self.db_pool_label.grid_remove()
+            self.db_pool_entry.grid_remove()
+            self.db_timeout_label.grid_remove()
+            self.db_timeout_entry.grid_remove()
+            self.db_retry_label.grid_remove()
+            self.db_retry_entry.grid_remove()
         else:  # PostgreSQL
             self.sqlite_frame.grid_remove()
             self.postgresql_frame.grid()
             self.db_user_entry.config(state='normal')
             self.db_password_entry.config(state='normal')
+            # Restaura campos específicos de PostgreSQL
+            self.db_user_label.grid()
+            self.db_password_label.grid()
+            self.db_ssl_label.grid()
+            self.db_ssl_combo.grid()
+            self.db_pool_label.grid()
+            self.db_pool_entry.grid()
+            self.db_timeout_label.grid()
+            self.db_timeout_entry.grid()
+            self.db_retry_label.grid()
+            self.db_retry_entry.grid()
     
     def browse_sqlite_file(self):
         """Abre diálogo para selecionar arquivo SQLite."""
@@ -828,7 +859,13 @@ class ConfiguracoesTab(ttk.Frame):
         if current_file and Path(current_file).exists():
             initial_dir = Path(current_file).parent
         else:
-            initial_dir = r"c:\Users\FenixPosts\Desktop\DAC_2025\Banco de dados"
+            # Fallback: diretório padrão do projeto (Versão PY/data)
+            try:
+                default_sqlite_path = self.config_manager.get_default_config('database').get('sqlite_path')
+                initial_dir = str(Path(default_sqlite_path).parent)
+            except Exception:
+                # Último recurso: raiz da pasta Versão PY
+                initial_dir = str(Path(__file__).resolve().parents[2])
         
         filename = filedialog.askopenfilename(
             title="Selecionar Arquivo SQLite",
