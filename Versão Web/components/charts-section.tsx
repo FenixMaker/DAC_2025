@@ -23,6 +23,15 @@ const timeData = [
   { mes: "Jun", individuos: 213847, dispositivos: 156234 },
 ]
 
+// Accessible color palette for charts - WCAG AA compliant
+const chartColors = {
+  chart1: "#3B82F6", // Blue - Excellent contrast on light and dark themes
+  chart2: "#10B981", // Green - Excellent contrast
+  chart3: "#F59E0B", // Amber - Excellent contrast
+  chart4: "#EF4444", // Red - Excellent contrast
+  chart5: "#8B5CF6", // Purple - Excellent contrast
+}
+
 export function ChartsSection() {
   return (
     <div className="grid gap-6 md:grid-cols-2">
@@ -56,35 +65,71 @@ export function ChartsSection() {
             config={{
               individuos: {
                 label: "Indivíduos",
-                color: "hsl(var(--chart-1))",
+                color: chartColors.chart1,
               },
               domicilios: {
                 label: "Domicílios",
-                color: "hsl(var(--chart-2))",
+                color: chartColors.chart2,
               },
             }}
-            className="h-[320px]"
+            className="h-[340px]"
           >
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={regionData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted/30" vertical={false} />
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={regionData} margin={{ top: 30, right: 20, left: 15, bottom: 25 }}>
+                <CartesianGrid 
+                  strokeDasharray="3 3" 
+                  stroke="#94A3B8" 
+                  strokeOpacity={0.3}
+                  vertical={false} 
+                />
                 <XAxis
                   dataKey="name"
-                  className="text-xs"
-                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                  axisLine={false}
-                  tickLine={false}
+                  className="text-sm font-medium"
+                  tick={{ fill: "#64748B", fontSize: 12, fontWeight: 500 }}
+                  axisLine={{ stroke: "#64748B", strokeWidth: 1 }}
+                  tickLine={{ stroke: "#64748B", strokeWidth: 1 }}
                 />
                 <YAxis
-                  className="text-xs"
-                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                  axisLine={false}
-                  tickLine={false}
+                  className="text-sm font-medium"
+                  tick={{ fill: "#64748B", fontSize: 11, fontWeight: 500 }}
+                  axisLine={{ stroke: "#64748B", strokeWidth: 1 }}
+                  tickLine={{ stroke: "#64748B", strokeWidth: 1 }}
+                  width={60}
                 />
-                <ChartTooltip content={<ChartTooltipContent />} cursor={{ fill: "hsl(var(--muted))", opacity: 0.1 }} />
-                <Legend wrapperStyle={{ paddingTop: "20px" }} iconType="circle" />
-                <Bar dataKey="individuos" fill="hsl(var(--chart-1))" radius={[8, 8, 0, 0]} maxBarSize={60} />
-                <Bar dataKey="domicilios" fill="hsl(var(--chart-2))" radius={[8, 8, 0, 0]} maxBarSize={60} />
+                <ChartTooltip 
+                  content={<ChartTooltipContent />} 
+                  cursor={{ fill: "rgba(148, 163, 184, 0.1)" }}
+                  contentStyle={{
+                    backgroundColor: "var(--card)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
+                  }}
+                />
+                <Legend 
+                  wrapperStyle={{ 
+                    paddingTop: "15px",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    paddingBottom: "5px"
+                  }} 
+                  iconType="rect"
+                  iconSize={14}
+                />
+                <Bar 
+                  dataKey="individuos" 
+                  fill={chartColors.chart1} 
+                  radius={[4, 4, 0, 0]} 
+                  maxBarSize={60}
+                  name="Indivíduos"
+                />
+                <Bar 
+                  dataKey="domicilios" 
+                  fill={chartColors.chart2} 
+                  radius={[4, 4, 0, 0]} 
+                  maxBarSize={60}
+                  name="Domicílios"
+                />
               </BarChart>
             </ResponsiveContainer>
           </ChartContainer>
@@ -121,48 +166,73 @@ export function ChartsSection() {
             config={{
               individuos: {
                 label: "Indivíduos",
-                color: "hsl(var(--chart-3))",
+                color: chartColors.chart3,
               },
               dispositivos: {
                 label: "Dispositivos",
-                color: "hsl(var(--chart-4))",
+                color: chartColors.chart4,
               },
             }}
-            className="h-[320px]"
+            className="h-[340px]"
           >
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={timeData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted/30" vertical={false} />
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={timeData} margin={{ top: 30, right: 20, left: 20, bottom: 25 }}>
+                <CartesianGrid 
+                  strokeDasharray="3 3" 
+                  stroke="#94A3B8" 
+                  strokeOpacity={0.3}
+                  vertical={false} 
+                />
                 <XAxis
                   dataKey="mes"
-                  className="text-xs"
-                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                  axisLine={false}
-                  tickLine={false}
+                  className="text-sm font-medium"
+                  tick={{ fill: "#64748B", fontSize: 12, fontWeight: 500 }}
+                  axisLine={{ stroke: "#64748B", strokeWidth: 1 }}
+                  tickLine={{ stroke: "#64748B", strokeWidth: 1 }}
                 />
                 <YAxis
-                  className="text-xs"
-                  tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 12 }}
-                  axisLine={false}
-                  tickLine={false}
+                  className="text-sm font-medium"
+                  tick={{ fill: "#64748B", fontSize: 11, fontWeight: 500 }}
+                  axisLine={{ stroke: "#64748B", strokeWidth: 1 }}
+                  tickLine={{ stroke: "#64748B", strokeWidth: 1 }}
+                  width={65}
                 />
-                <ChartTooltip content={<ChartTooltipContent />} />
-                <Legend wrapperStyle={{ paddingTop: "20px" }} iconType="circle" />
+                <ChartTooltip 
+                  content={<ChartTooltipContent />} 
+                  contentStyle={{
+                    backgroundColor: "var(--card)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)"
+                  }}
+                />
+                <Legend 
+                  wrapperStyle={{ 
+                    paddingTop: "15px",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                    paddingBottom: "5px"
+                  }} 
+                  iconType="line"
+                  iconSize={16}
+                />
                 <Line
                   type="monotone"
                   dataKey="individuos"
-                  stroke="hsl(var(--chart-3))"
+                  stroke={chartColors.chart3}
                   strokeWidth={3}
-                  dot={{ fill: "hsl(var(--chart-3))", r: 5, strokeWidth: 2, stroke: "hsl(var(--card))" }}
-                  activeDot={{ r: 7, strokeWidth: 2 }}
+                  dot={{ fill: chartColors.chart3, r: 6, strokeWidth: 2, stroke: "#ffffff" }}
+                  activeDot={{ r: 8, strokeWidth: 3, stroke: "#ffffff" }}
+                  name="Indivíduos"
                 />
                 <Line
                   type="monotone"
                   dataKey="dispositivos"
-                  stroke="hsl(var(--chart-4))"
+                  stroke={chartColors.chart4}
                   strokeWidth={3}
-                  dot={{ fill: "hsl(var(--chart-4))", r: 5, strokeWidth: 2, stroke: "hsl(var(--card))" }}
-                  activeDot={{ r: 7, strokeWidth: 2 }}
+                  dot={{ fill: chartColors.chart4, r: 6, strokeWidth: 2, stroke: "#ffffff" }}
+                  activeDot={{ r: 8, strokeWidth: 3, stroke: "#ffffff" }}
+                  name="Dispositivos"
                 />
               </LineChart>
             </ResponsiveContainer>

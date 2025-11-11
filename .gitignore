@@ -397,3 +397,4 @@ user_settings.json
 # package-lock.json  # Descomentar se preferir não versionar
 pnpm-lock.yaml
 yarn.lock
+README_ACADEMICO.md
