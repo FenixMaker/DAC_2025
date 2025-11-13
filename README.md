@@ -1,4 +1,4 @@
-# 🏛️ Sistema DAC — Digital Analysis and Control
+# 🏛️ Sistema DAC — Análise de Exclusão Digital no Brasil
 
 <div align="center">
 
@@ -9,6 +9,7 @@
 [![Next.js](https://img.shields.io/badge/Next.js-16-black.svg)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.111-009688.svg)](https://fastapi.tiangolo.com/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue.svg)](https://www.postgresql.org/)
 
 **Autor:** Alejandro Alexandre (RA: 197890)  
 **Curso:** Análise e Desenvolvimento de Sistemas  
@@ -17,6 +18,19 @@
 </div>
 
 ---
+
+## Índice
+
+- [📋 Sobre o Projeto](#-sobre-o-projeto)
+- [🚀 Instalação Rápida](#-instalação-rápida)
+- [🖱️ Executáveis Prontos para Uso](#️-executáveis-prontos-para-uso)
+- [⚙️ Configuração](#️-configuração)
+- [▶️ Uso](#️-uso)
+- [🤝 Contribuição](#-contribuição)
+- [📚 Documentação](#-documentação)
+- [📄 Licença](#-licença)
+- [📞 Contato e Suporte](#-contato-e-suporte)
+- [🗃️ Banco de Dados e Filtros](#️-banco-de-dados-e-filtros)
 
 ## 📋 Sobre o Projeto
 
@@ -65,7 +79,7 @@ Apoiar decisões estratégicas por meio de dados confiáveis e relatórios consi
 
 **Banco de Dados:**
 - SQLite (desenvolvimento)
-- PostgreSQL (produção - opcional)
+- PostgreSQL (produção)
 
 ---
 
@@ -376,13 +390,7 @@ O projeto possui documentação abrangente organizada em [`docs/`](docs/):
 ---
 
 ## 📄 Licença
-
-Este projeto é de uso interno do Departamento de Administração e Controle (DAC) e pode ser utilizado em contexto acadêmico/educacional conforme autorização do DAC.
-
-- Uso: restrito a fins institucionais e educacionais.
-- Distribuição: não autorizada sem consentimento do DAC.
-
-Para dúvidas, abra uma issue no GitHub ou contate a equipe responsável.
+Este projeto utiliza a MIT License. Consulte `LICENSE`.
 
 ---
 
@@ -395,8 +403,48 @@ Para dúvidas, abra uma issue no GitHub ou contate a equipe responsável.
 
 **Repositório:** [DAC_2025](https://github.com/FenixMaker/DAC_2025)  
 **Issues:** [Reportar Problema](https://github.com/FenixMaker/DAC_2025/issues)
+**Email:** fenixposts@gmail.com  
+**GitHub:** fenixmaker
 
 ---
+
+## 🗃️ Banco de Dados e Filtros
+
+### Configuração do Banco
+
+- Desenvolvimento: SQLite (`sqlite:///dac_dev.db`)
+- Produção: PostgreSQL (`postgresql+psycopg2://<user>:<pass>@<host>:<port>/<db>`) com `DB_SSLMODE=require`
+- Pool (SQLAlchemy): `pool_size=10`, `max_overflow=20`, `pool_pre_ping=True`, `pool_recycle=1800`
+
+### Endpoint com Filtros (FastAPI)
+
+```python
+from fastapi import APIRouter, Depends, Query
+from sqlalchemy.orm import Session
+from sqlalchemy import asc, desc
+
+router = APIRouter(prefix="/api")
+
+@router.get("/households")
+def list_households(region: str | None = Query(None), has_internet: bool | None = Query(None), limit: int = 20, offset: int = 0, orderby: str | None = None, db: Session = Depends(get_session)):
+  q = db.query(Household)
+  if region:
+    q = q.filter(Household.region.ilike(f"%{region}%"))
+  if has_internet is not None:
+    q = q.filter(Household.has_internet == has_internet)
+  if orderby:
+    field, direction = orderby.split(":")
+    col = Household.region if field == "region" else Household.has_internet
+    q = q.order_by(asc(col) if direction == "asc" else desc(col))
+  return {"items": q.limit(limit).offset(offset).all()}
+```
+
+### Exemplo Frontend (Next.js)
+
+```typescript
+const res = await fetch("http://localhost:8000/api/households?region=Sudeste&has_internet=true&limit=10&orderby=region:asc");
+const { items } = await res.json();
+```
 
 <div align="center">
 

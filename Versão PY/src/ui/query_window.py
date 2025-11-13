@@ -142,20 +142,39 @@ class QueryWindow:
         
         # Estilos para scrollbars
         style.configure('Query.Vertical.TScrollbar',
-                       background=colors['bg_secondary'],
+                       background=colors['bg_card'],  # Cor mais clara para melhor visibilidade
                        troughcolor=colors['bg_primary'],
                        bordercolor=colors['border'],
-                       arrowcolor=colors['text_secondary'],
-                       darkcolor=colors['bg_secondary'],
-                       lightcolor=colors['bg_secondary'])
+                       arrowcolor=colors['text_primary'],  # Cor mais clara para as setas
+                       darkcolor=colors['bg_card'],
+                       lightcolor=colors['bg_card'],
+                       width=20)  # Aumentar largura da scrollbar vertical para 20px (mais espessa)
         
         style.configure('Query.Horizontal.TScrollbar',
-                       background=colors['bg_secondary'],
+                       background=colors['bg_card'],  # Cor mais clara para melhor visibilidade
                        troughcolor=colors['bg_primary'],
                        bordercolor=colors['border'],
-                       arrowcolor=colors['text_secondary'],
-                       darkcolor=colors['bg_secondary'],
-                       lightcolor=colors['bg_secondary'])
+                       arrowcolor=colors['text_primary'],  # Cor mais clara para as setas
+                       darkcolor=colors['bg_card'],
+                       lightcolor=colors['bg_card'],
+                       width=16)  # Aumentar altura da scrollbar horizontal
+        
+        # Adicionar estilos de hover para melhor interatividade
+        style.map('Query.Vertical.TScrollbar',
+                 background=[('active', colors['bg_hover']),
+                           ('pressed', colors['accent_blue'])],
+                 arrowcolor=[('active', colors['text_primary']),
+                           ('pressed', colors['accent_green'])],
+                 darkcolor=[('active', colors['bg_hover'])],
+                 lightcolor=[('active', colors['bg_hover'])])
+        
+        style.map('Query.Horizontal.TScrollbar',
+                 background=[('active', colors['bg_hover']),
+                           ('pressed', colors['accent_blue'])],
+                 arrowcolor=[('active', colors['text_primary']),
+                           ('pressed', colors['accent_green'])],
+                 darkcolor=[('active', colors['bg_hover'])],
+                 lightcolor=[('active', colors['bg_hover'])])
     
     def load_filter_options(self):
         """Carrega as opções disponíveis para os filtros com tratamento robusto de erros"""
@@ -614,6 +633,7 @@ class QueryWindow:
         # Posição padrão: col=0 (lado esquerdo)
         filters_container.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=(0, 15))
         filters_container.columnconfigure(0, weight=1)
+        filters_container.rowconfigure(1, weight=1)  # Permitir expansão do frame de filtros
         self.filters_container = filters_container
         
         # Título da seção de filtros
@@ -624,12 +644,32 @@ class QueryWindow:
                                 fg='#F0F6FC')
         filters_title.grid(row=0, column=0, sticky=tk.W, pady=(0, 15))
         
-        # Frame interno dos filtros
-        filters_frame = tk.Frame(filters_container, bg='#21262D', relief='flat', bd=1)
-        filters_frame.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=0, pady=0)
+        # Criar frame com scroll para os filtros
+        # Frame container para o canvas e scrollbar
+        scroll_container = tk.Frame(filters_container, bg='#21262D', relief='flat', bd=1)
+        scroll_container.grid(row=1, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=0, pady=0)
+        scroll_container.columnconfigure(0, weight=1)
+        scroll_container.rowconfigure(0, weight=1)
+        
+        # Canvas para os filtros
+        filters_canvas = tk.Canvas(scroll_container, bg='#21262D', highlightthickness=0, relief='flat')
+        filters_canvas.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
+        
+        # Scrollbar vertical
+        v_scrollbar = ttk.Scrollbar(scroll_container, orient=tk.VERTICAL, command=filters_canvas.yview, style='Query.Vertical.TScrollbar')
+        v_scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S), padx=(4, 4), pady=4)  # Aumentar padding para melhor usabilidade (4px de cada lado)
+        
+        # Configurar canvas para usar a scrollbar
+        filters_canvas.configure(yscrollcommand=v_scrollbar.set)
+        
+        # Frame interno dos filtros que será colocado no canvas
+        filters_frame = tk.Frame(filters_canvas, bg='#21262D')
         filters_frame.columnconfigure(0, weight=1)
         
-        # Padding interno reduzido
+        # Adicionar o frame ao canvas (largura ajustada para acomodar scrollbar mais espessa)
+        canvas_window = filters_canvas.create_window((0, 0), window=filters_frame, anchor='nw', width=280)
+        
+        # Padding interno
         filters_content = tk.Frame(filters_frame, bg='#21262D')
         filters_content.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S), padx=15, pady=15)
         filters_content.columnconfigure(0, weight=1)
@@ -734,6 +774,20 @@ class QueryWindow:
                              bg='#8B949E', fg='white', font=('Segoe UI', 9, 'bold'),
                              relief='flat', padx=12, pady=6)
         clear_btn.grid(row=0, column=1, padx=(5, 0), sticky=(tk.W, tk.E))
+        
+        # Configurar scroll do canvas
+        def configure_scroll(event):
+            filters_canvas.configure(scrollregion=filters_canvas.bbox('all'))
+        
+        filters_frame.bind('<Configure>', configure_scroll)
+        
+        # Configurar altura máxima do canvas (para não expandir demais)
+        filters_canvas.configure(height=450)  # Altura máxima para o painel de filtros
+        
+        # Salvar referências para uso posterior
+        self.filters_canvas = filters_canvas
+        self.filters_frame = filters_frame
+        self.scroll_container = scroll_container
     
     def create_results_frame(self, parent):
         """Cria o frame de resultados"""
@@ -929,6 +983,9 @@ class QueryWindow:
                     self._content_frame.rowconfigure(0, weight=0)
                     self._content_frame.rowconfigure(1, weight=1)
                     self._stacked = True
+                    # Ajustar altura do canvas quando empilhado
+                    if hasattr(self, 'filters_canvas'):
+                        self.filters_canvas.configure(height=300)
             elif width >= threshold and self._stacked:
                 # Restaurar layout lado a lado
                 self.filters_container.grid_forget()
@@ -940,6 +997,9 @@ class QueryWindow:
                 self._content_frame.columnconfigure(0, weight=1)
                 self._content_frame.columnconfigure(1, weight=2)
                 self._stacked = False
+                # Restaurar altura normal do canvas
+                if hasattr(self, 'filters_canvas'):
+                    self.filters_canvas.configure(height=450)
             # Ajuste dinâmico do wrap de títulos/labels se desejado (futuro)
         except Exception as e:
             self.logger.error(f"Erro ao ajustar layout responsivo: {e}")
